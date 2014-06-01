@@ -18,7 +18,7 @@ generated ``autoload_real.php`` file does.
 **NOTE:** if you want to use the autoloader of Composer your ``AppKernel`` class  must
 extend the ``EvolutionKernel``, see `the installation documentation`_.
 
-.. _the installation documentation: ../../README.md
+.. _the installation documentation: index.rst#configuration
 
 
 Example
