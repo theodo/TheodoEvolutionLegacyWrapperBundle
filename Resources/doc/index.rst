@@ -22,6 +22,29 @@ And run Composer:
 Configuration
 =============
 
+* Extend the EvolutionKernel:
+
+::
+
+    use Theodo\Evolution\Bundle\LegacyWrapperBundle\HttpKernel\EvolutionKernel;
+
+    class AppKernel extends EvolutionKernel
+    {
+        // ...
+    }
+
+* Inject the ``$loader`` to the kernel in the front controllers and the console script:
+
+::
+
+    // ...
+    $loader = require_once __DIR__.'/../app/bootstrap.php.cache';
+
+    // ...
+
+    $kernel = new AppKernel('dev', true);
+    $kernel->setLoader($loader);
+
 * Add the bundles in your app/AppKernel.php:
 
 ::
@@ -48,9 +71,12 @@ What these options are?
  * ``legacy_path``: this tells the legacy kernel where your legacy project lives
  * ``kernel_id``: you can specify which legacy kernel you want to use. Using an id allows
                   you to use your own kernel or use those provided by the bundle (see
-                  [the list](../../Kernel)
+                  `implemented kernels`_
  * ``class_loader_id``: specify the service that will handle the autoloading of your legacy project.
-                        The bundle does not provide (yet) any autoloader, you have to [create your own](autoloading.rst).
+                        The bundle does not provide (yet) any autoloader, you have to `create your own`_.
+
+.. _implemented kernels: ../../Kernel
+.. _create your own: autoloading.rst
 
 How it works
 ============

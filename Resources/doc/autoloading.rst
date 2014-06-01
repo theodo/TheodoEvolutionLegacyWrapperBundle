@@ -15,10 +15,16 @@ You can also implement the ``ComposerLoaderAwareInterface`` which allows you to 
 autoloader provided by Composer. This methods will do more or less the same thing as the
 generated ``autoload_real.php`` file does.
 
+**NOTE:** if you want to use the autoloader of Composer your ``AppKernel`` class  must
+extend the ``EvolutionKernel``, see `the installation documentation`_.
+
+.. _the installation documentation: ../../README.md
+
+
 Example
 =======
 
-Here is an example of a legacy class loader for [symfony 1.5](https://github.com/LExpress/symfony1):
+Here is an example of a legacy class loader for `symfony 1.5 <https://github.com/LExpress/symfony1>`:
 
 ::
 
@@ -104,7 +110,7 @@ And the service configuration:
             - loader_aware
 
 
-This example uses the generated files by Composer in the legacy project to load namespaced classes, "class mapped" classes and
-require files that autoload libraries (i.e. Swift Mailer). In this example it does not require Swift Mailer autoloading
-file because Symfony 2 also comes with it by default. Thus it would generate a "PHP Fatal error: Cannot redeclare class
-Swift".
+This example uses the generated files by Composer in the legacy project to load namespaced classes,
+"class mapped" classes and require files that autoload libraries (i.e. Swift Mailer). In this
+example it does not require Swift Mailer autoloading file because Symfony 2 also comes with it by
+default. Thus it would generate a "PHP Fatal error: Cannot redeclare class Swift".
