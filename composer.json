@@ -1,0 +1,34 @@
+{
+    "name": "theodo-evolution/legacy-wrapper-bundle",
+    "type": "symfony-bundle",
+    "keywords": ["legacy", "symfony1", "symfony2"],
+    "homepage": "http://www.theodo.fr",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Theodo",
+            "homepage": "http://www.theodo.fr"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Theodo\\Evolution\\Bundle\\LegacyWrapperBundle\\": ""
+        }
+    },
+    "require": {
+        "php": ">=5.3.3",
+        "composer/composer": "~1.0@dev",
+        "symfony/framework-bundle": "~2.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.1",
+        "phpspec/prophecy": "~1.1",
+        "phpspec/prophecy-phpunit": "~1.0"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}
