@@ -63,7 +63,7 @@ class RouterListener implements EventSubscriberInterface
             $this->routerListener->onKernelRequest($event);
         } catch (NotFoundHttpException $e) {
             if (null !== $this->logger) {
-                $this->logger->info('Request handled by the '.$this->legacyKernel->getName().' wrapper.');
+                $this->logger->info('Request handled by the '.$this->legacyKernel->getName().' kernel.');
             }
 
             $response = $this->legacyKernel->handle($event->getRequest(), $event->getRequestType(), true);
