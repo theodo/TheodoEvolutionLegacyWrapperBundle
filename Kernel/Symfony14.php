@@ -52,8 +52,11 @@ class Symfony14 implements HttpKernelInterface
 
         // @todo make the app and env parameters dynamic
         $configuration = \ProjectConfiguration::getApplicationConfiguration('ManPerf', 'dev', true);
+        $context = \sfContext::createInstance($configuration);
         ob_start();
-        \sfContext::createInstance($configuration)->dispatch();
+        $context->dispatch();
+        $context->shutdown();
+
         $response = ob_get_contents();
         ob_end_clean();
 
