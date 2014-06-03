@@ -15,5 +15,12 @@ interface LegacyClassLoaderInterface
      * @return void
      */
     public function autoload();
+
+    /**
+     * Check whether the legacy is already autoloaded.
+     *
+     * @return bool
+     */
+    public function isAutoloaded();
 }
  
