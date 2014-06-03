@@ -10,11 +10,11 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Theodo\Evolution\Bundle\LegacyWrapperBundle\Autoload\LegacyClassLoaderInterface;
 
 /**
- * Symfony14 kernel handles.
+ * Symfony14Kernel kernel handles.
  * 
  * @author Benjamin Grandfond <benjaming@theodo.fr>
  */
-class Symfony14 implements LegacyKernelInterface
+class Symfony14Kernel implements LegacyKernelInterface
 {
     /**
      * @var string
