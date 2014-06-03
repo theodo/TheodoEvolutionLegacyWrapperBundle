@@ -7,6 +7,7 @@
     <parameters>
         <parameter key="theodo_evolution_legacy_wrapper.legacy_kernel.symfony14.class">Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel\Symfony14</parameter>
         <parameter key="theodo_evolution_legacy_wrapper.router_listener.class">Theodo\Evolution\Bundle\LegacyWrapperBundle\EventListener\RouterListener</parameter>
+        <parameter key="theodo_evolution_legacy_wrapper.legacy_autoload_listener.class">Theodo\Evolution\Bundle\LegacyWrapperBundle\EventListener\LegacyAutoloadListener</parameter>
     </parameters>
 
     <services>
@@ -18,9 +19,13 @@
             <argument type="service" id="logger" on-invalid="ignore" />
         </service>
 
+        <service id="theodo_evolution_legacy_wrapper.legacy_autoload_listener" class="%theodo_evolution_legacy_wrapper.legacy_autoload_listener.class%">
+            <tag name="kernel.event_subscriber" />
+            <argument type="service" id="theodo_evolution_legacy_wrapper.autoload.class_loader" />
+        </service>
+
         <service id="theodo_evolution_legacy_wrapper.legacy_kernel.symfony14" class="%theodo_evolution_legacy_wrapper.legacy_kernel.symfony14.class%" public="false">
             <argument type="string">%theodo_evolution_legacy_wrapper.legacy_path%</argument>
-            <argument type="service" id="theodo_evolution_legacy_wrapper.autoload.class_loader" />
         </service>
         <service id="theodo_evolution_legacy_wrapper.legacy_kernel" alias="theodo_evolution_legacy_wrapper.legacy_kernel.symfony14" />
     </services>

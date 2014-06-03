@@ -20,19 +20,12 @@ class Symfony14 implements HttpKernelInterface
     private $legacyPath;
 
     /**
-     * @var \Theodo\Evolution\Bundle\LegacyWrapperBundle\Autoload\LegacyClassLoaderInterface
+     * @param string $legacyPath
      */
-    private $classLoader;
-
-    /**
-     * @param $legacyPath
-     * @param LegacyClassLoaderInterface $classLoader
-     */
-    public function __construct($legacyPath, LegacyClassLoaderInterface $classLoader)
+    public function __construct($legacyPath)
     {
         $this->legacyPath = $legacyPath;
         $this->vendorPath = $this->legacyPath.'/lib/vendor';
-        $this->classLoader = $classLoader;
     }
 
     /**
@@ -45,8 +38,6 @@ class Symfony14 implements HttpKernelInterface
         if ($session->isStarted()) {
             $session->save();
         }
-
-        $this->classLoader->autoload();
 
         require_once $this->legacyPath.'/config/ProjectConfiguration.class.php';
 
