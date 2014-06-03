@@ -7,7 +7,7 @@ use Composer\Autoload\ClassLoader;
 /**
  * ComposerLoaderAwareInterface
  * 
- * @author Benjamin Grandfond <benjamin.grandfond@gmail.com>
+ * @author Benjamin Grandfond <benjaming@theodo.fr>
  */
 interface ComposerLoaderAwareInterface
 {

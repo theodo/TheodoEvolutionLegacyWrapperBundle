@@ -27,14 +27,14 @@ class Symfony14 implements LegacyKernelInterface
     private $classLoader;
 
     /**
-     * @var \sfContext The symfony context
-     */
-    private $context;
-
-    /**
      * @var boolean
      */
     private $isBooted;
+
+    /**
+     * @var \sfApplicationConfiguration
+     */
+    private $configuration;
 
     /**
      * @param $legacyPath
@@ -61,26 +61,10 @@ class Symfony14 implements LegacyKernelInterface
             $this->classLoader->autoload();
         }
 
-        /**
-         * Creating the symfony context starts a session in symfony
-         * so we need to save and stop the Symfony 2 session before.
-         */
-        $session = $container->get('session');
-        if ($session->isStarted()) {
-            $session->save();
-        }
-
         require_once $this->legacyPath.'/config/ProjectConfiguration.class.php';
 
         // @todo make the app and env parameters dynamic
-        $configuration = \ProjectConfiguration::getApplicationConfiguration('ManPerf', 'dev', true);
-        $this->context = \sfContext::createInstance($configuration);// be careful this will start the session of symfony 1
-
-        /**
-         * Once symfony 1.4 is booted we can save and restart the
-         * session with Symfony 2
-         */
-        $session->migrate();
+        $this->configuration = \ProjectConfiguration::getApplicationConfiguration('ManPerf', 'dev', true);
 
         $this->isBooted = true;
     }
@@ -95,13 +79,14 @@ class Symfony14 implements LegacyKernelInterface
             $session->save();
         }
 
+        $context = \sfContext::createInstance($this->configuration);// be careful this will start the session of symfony 1
         ob_start();
-        $this->context->dispatch();
-        $this->context->shutdown();
+        $context->dispatch();
+        $context->shutdown();
         ob_end_clean();
 
         // @todo: the debug toolbar is not displayed
-        return $this->convertResponse($this->context->getResponse());
+        return $this->convertResponse($context->getResponse());
     }
 
     /**
@@ -124,7 +109,7 @@ class Symfony14 implements LegacyKernelInterface
 
     /**
      * Convert the symfony 1.4 response to a Response.
-     * @param $legacyResponse
+     * @param  \sfWebResponse $legacyResponse
      * @return Response
      */
     private function convertResponse($legacyResponse)
