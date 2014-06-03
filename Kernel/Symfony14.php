@@ -56,11 +56,9 @@ class Symfony14 implements HttpKernelInterface
         ob_start();
         $context->dispatch();
         $context->shutdown();
-
-        $response = ob_get_contents();
         ob_end_clean();
 
-        return new Response($response);
+        return $this->convertResponse($context->getResponse());
     }
 
     /**
@@ -69,5 +67,19 @@ class Symfony14 implements HttpKernelInterface
     public function getName()
     {
         return 'symfony14';
+    }
+
+    /**
+     * Convert the symfony 1.4 response to a Response.
+     * @param $legacyResponse
+     * @return Response
+     */
+    private function convertResponse($legacyResponse)
+    {
+        $response = new Response($legacyResponse->getContent(), $legacyResponse->getStatusCode());
+        $response->setCharset($legacyResponse->getCharset());
+        $response->setStatusCode($legacyResponse->getStatusCode());
+
+        return $response;
     }
 }
