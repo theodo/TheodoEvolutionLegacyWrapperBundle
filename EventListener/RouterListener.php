@@ -9,8 +9,8 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\EventListener\RouterListener as SymfonyRouterListener;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernel;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel\LegacyKernelInterface;
 
 /**
  * RouterListener delegates the request handling to the Symfony router listener.
@@ -37,11 +37,11 @@ class RouterListener implements EventSubscriberInterface
     protected $logger;
 
     /**
-     * @param HttpKernelInterface $legacyKernel
+     * @param LegacyKernelInterface $legacyKernel
      * @param SymfonyRouterListener $routerListener
-     * @param LoggerInterface $logger
+     * @param LoggerInterface       $logger
      */
-    public function __construct(HttpKernelInterface $legacyKernel, SymfonyRouterListener $routerListener, LoggerInterface $logger = null)
+    public function __construct(LegacyKernelInterface $legacyKernel, SymfonyRouterListener $routerListener, LoggerInterface $logger = null)
     {
         $this->legacyKernel = $legacyKernel;
         $this->routerListener = $routerListener;

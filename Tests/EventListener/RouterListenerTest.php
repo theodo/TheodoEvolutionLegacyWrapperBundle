@@ -27,7 +27,7 @@ class RouterListenerTest extends ProphecyTestCase
         $baseRouterListener = $this->prophesize('Symfony\Component\HttpKernel\EventListener\RouterListener');
         $baseRouterListener->onKernelRequest($event)->willThrow('Symfony\Component\HttpKernel\Exception\NotFoundHttpException');
 
-        $kernel = $this->prophesize('Symfony\Component\HttpKernel\HttpKernelInterface');
+        $kernel = $this->prophesize('Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel\LegacyKernelInterface');
         $kernel->handle($request, HttpKernel::MASTER_REQUEST, true)->willReturn($response);
 
         $routerListener = new \Theodo\Evolution\Bundle\LegacyWrapperBundle\EventListener\RouterListener($kernel->reveal(), $baseRouterListener->reveal());
@@ -46,7 +46,7 @@ class RouterListenerTest extends ProphecyTestCase
         $baseRouterListener = $this->prophesize('Symfony\Component\HttpKernel\EventListener\RouterListener');
         $baseRouterListener->onKernelRequest($event);
 
-        $kernel = $this->prophesize('Symfony\Component\HttpKernel\HttpKernelInterface');
+        $kernel = $this->prophesize('Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel\LegacyKernelInterface');
         $kernel->handle()->shouldNotBeCalled();
 
         $routerListener = new RouterListener($kernel->reveal(), $baseRouterListener->reveal());
@@ -65,7 +65,7 @@ class RouterListenerTest extends ProphecyTestCase
         $baseRouterListener = $this->prophesize('Symfony\Component\HttpKernel\EventListener\RouterListener');
         $baseRouterListener->onKernelRequest($event)->willThrow('Symfony\Component\HttpKernel\Exception\NotFoundHttpException');
 
-        $kernel = $this->prophesize('Symfony\Component\HttpKernel\HttpKernelInterface');
+        $kernel = $this->prophesize('Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel\LegacyKernelInterface');
         $kernel->handle($request, HttpKernel::MASTER_REQUEST, true)->willReturn($response);
 
         $routerListener = new RouterListener($kernel->reveal(), $baseRouterListener->reveal());
