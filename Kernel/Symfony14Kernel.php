@@ -117,6 +117,7 @@ class Symfony14Kernel implements LegacyKernelInterface
         $response = new Response($legacyResponse->getContent(), $legacyResponse->getStatusCode());
         $response->setCharset($legacyResponse->getCharset());
         $response->setStatusCode($legacyResponse->getStatusCode());
+        $response->headers->set('Content-Type', $legacyResponse->getContentType());
 
         return $response;
     }
