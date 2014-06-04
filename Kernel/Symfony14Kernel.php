@@ -37,6 +37,11 @@ class Symfony14Kernel implements LegacyKernelInterface
     private $classLoader;
 
     /**
+     * @var array
+     */
+    private $options = array();
+
+    /**
      * @param $rootDir
      * @param LegacyClassLoaderInterface $classLoader
      */
@@ -56,6 +61,10 @@ class Symfony14Kernel implements LegacyKernelInterface
      */
     public function boot(ContainerInterface $container)
     {
+        if (empty($this->options)) {
+            throw new \RuntimeException('You must provide options for the Symfony 1.4 kernel.');
+        }
+
         if ($this->isBooted()) {
             return;
         }
@@ -66,8 +75,11 @@ class Symfony14Kernel implements LegacyKernelInterface
 
         require_once $this->rootDir.'/config/ProjectConfiguration.class.php';
 
-        // @todo make the app and env parameters dynamic
-        $this->configuration = \ProjectConfiguration::getApplicationConfiguration('ManPerf', 'dev', true);
+        $application = $this->options['application'];
+        $environment = $this->options['environment'];
+        $debug = $this->options['debug'];
+
+        $this->configuration = \ProjectConfiguration::getApplicationConfiguration($application, $environment, $debug);
 
         $this->isBooted = true;
     }
@@ -124,6 +136,16 @@ class Symfony14Kernel implements LegacyKernelInterface
     public function setRootDir($rootDir)
     {
         $this->rootDir = $rootDir;
+    }
+
+    /**
+     * Set kernel options
+     *
+     * @param array $options
+     */
+    public function setOptions(array $options = array())
+    {
+        $this->options = $options;
     }
 
     /**

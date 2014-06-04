@@ -48,5 +48,12 @@ interface LegacyKernelInterface extends HttpKernelInterface
      * @return string
      */
     public function getName();
+
+    /**
+     * Set kernel options
+     *
+     * @param array $options
+     */
+    public function setOptions(array $options = array());
 }
  
