@@ -22,7 +22,10 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('legacy_path')->isRequired()->end()
+                ->scalarNode('root_dir')
+                    ->info('The path where the legacy app lives')
+                    ->isRequired()
+                ->end()
                 ->scalarNode('kernel_id')->defaultValue('theodo_evolution_legacy_wrapper.legacy_kernel.symfony14')->end()
                 ->scalarNode('class_loader_id')->isRequired()->end()
             ->end();

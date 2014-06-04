@@ -27,5 +27,26 @@ interface LegacyKernelInterface extends HttpKernelInterface
      * @return boolean
      */
     public function isBooted();
+
+    /**
+     * Return the directory where the legacy app lives.
+     *
+     * @return string
+     */
+    public function getRootDir();
+
+    /**
+     * Set the directory where the legacy app lives.
+     *
+     * @param string $rootDir
+     */
+    public function setRootDir($rootDir);
+
+    /**
+     * Return the name of the kernel.
+     *
+     * @return string
+     */
+    public function getName();
 }
  
