@@ -65,6 +65,13 @@ Configuration
         legacy_path:     %kernel.root_dir%/../legacy
         kernel_id:       theodo_evolution_legacy_wrapper.legacy_kernel.symfony14
         class_loader_id: your_bundle.autoload.legacy_class_loader
+        assets:
+            web:
+                base: web
+                directories:
+                    - css
+                    - js
+                    - images
 
 What these options are?
 
@@ -74,6 +81,8 @@ What these options are?
                   `implemented kernels`_
  * ``class_loader_id``: specify the service that will handle the autoloading of your legacy project.
                         The bundle does not provide (yet) any autoloader, you have to `create your own`_.
+ * ``assets``: configure the assets of the legacy app to install in the web directory with the legacy assets
+               install command: ``php app/console legacy:assets:install --symlink``
 
 .. _implemented kernels: ../../Kernel
 .. _create your own: autoloading.rst
