@@ -2,6 +2,8 @@
 
 namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Autoload;
 
+use Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel\LegacyKernelInterface;
+
 /**
  * LegacyClassLoaderInterface
  * 
@@ -22,5 +24,12 @@ interface LegacyClassLoaderInterface
      * @return bool
      */
     public function isAutoloaded();
+
+    /**
+     * Inject the kernel into the class looader.
+     *
+     * @param LegacyKernelInterface $kernel
+     */
+    public function setKernel(LegacyKernelInterface $kernel);
 }
  
