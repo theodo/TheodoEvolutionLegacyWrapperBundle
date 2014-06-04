@@ -13,10 +13,16 @@ class CodeIgniterKernel implements LegacyKernelInterface
      * @var string
      */
     private $rootDir;
+
     /**
      * @var boolean
      */
     private $isBooted = false;
+
+    /**
+     * @var array
+     */
+    private $options = array();
 
     /**
      * Handles a Request to convert it to a Response.
@@ -97,4 +103,13 @@ class CodeIgniterKernel implements LegacyKernelInterface
         return 'codeigniter';
     }
 
+    /**
+     * Set kernel options
+     *
+     * @param array $options
+     */
+    public function setOptions(array $options = array())
+    {
+        $this->options = $options;
+    }
 } 
