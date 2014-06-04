@@ -1,0 +1,100 @@
+<?php
+
+namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel;
+
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+
+class CodeIgniterKernel implements LegacyKernelInterface
+{
+    /**
+     * @var string
+     */
+    private $rootDir;
+    /**
+     * @var boolean
+     */
+    private $isBooted = false;
+
+    /**
+     * Handles a Request to convert it to a Response.
+     *
+     * When $catch is true, the implementation must catch all exceptions
+     * and do its best to convert them to a Response instance.
+     *
+     * @param Request $request A Request instance
+     * @param int $type The type of the request
+     *                          (one of HttpKernelInterface::MASTER_REQUEST or HttpKernelInterface::SUB_REQUEST)
+     * @param bool $catch Whether to catch exceptions or not
+     *
+     * @return Response A Response instance
+     *
+     * @throws \Exception When an Exception occurs during processing
+     *
+     * @api
+     */
+    public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = true)
+    {
+        ob_start();
+        require_once $this->getRootDir().'/index.php';
+        $content  = ob_get_contents();
+        ob_end_flush();
+
+        return new Response($content);
+
+    }
+
+    /**
+     * Boot the legacy kernel.
+     *
+     * @param  ContainerInterface $container
+     * @return mixed
+     */
+    public function boot(ContainerInterface $container)
+    {
+        $this->isBooted = true;
+    }
+
+    /**
+     * Check whether the legacy kernel is already booted or not.
+     *
+     * @return boolean
+     */
+    public function isBooted()
+    {
+        return $this->isBooted;
+    }
+
+    /**
+     * Return the directory where the legacy app lives.
+     *
+     * @return string
+     */
+    public function getRootDir()
+    {
+        return $this->rootDir;
+    }
+
+    /**
+     * Set the directory where the legacy app lives.
+     *
+     * @param string $rootDir
+     */
+    public function setRootDir($rootDir)
+    {
+        $this->rootDir = $rootDir;
+    }
+
+    /**
+     * Return the name of the kernel.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return 'codeigniter';
+    }
+
+} 
