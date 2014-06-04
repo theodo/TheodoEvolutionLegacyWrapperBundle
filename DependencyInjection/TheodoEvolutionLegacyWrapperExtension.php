@@ -32,6 +32,9 @@ class TheodoEvolutionLegacyWrapperExtension extends Extension
         $container->setParameter('theodo_evolution_legacy_wrapper.assets', $config['assets']);
 
         $container->setAlias('theodo_evolution_legacy_wrapper.legacy_kernel', $config['kernel_id']);
-        $container->setAlias('theodo_evolution_legacy_wrapper.autoload.class_loader', $config['class_loader_id']);
+
+        if (isset($config['class_loader_id'])) {
+            $container->setAlias('theodo_evolution_legacy_wrapper.autoload.class_loader', $config['class_loader_id']);
+        }
     }
 }
