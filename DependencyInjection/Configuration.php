@@ -22,9 +22,29 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('legacy_path')->isRequired()->end()
+                ->scalarNode('root_dir')
+                    ->info('The path where the legacy app lives')
+                    ->isRequired()
+                ->end()
                 ->scalarNode('kernel_id')->defaultValue('theodo_evolution_legacy_wrapper.legacy_kernel.symfony14')->end()
                 ->scalarNode('class_loader_id')->isRequired()->end()
+                ->arrayNode('assets')
+                    ->isRequired()
+                    ->requiresAtLeastOneElement()
+                    ->useAttributeAsKey('name')
+                    ->prototype('array')
+                        ->children()
+                            ->scalarNode('base')->isRequired()->end()
+                            ->arrayNode('directories')
+                            ->example(array('css', 'js', 'images'))
+                            ->beforeNormalization()
+                                ->ifTrue(function ($v) { return !is_array($v); })
+                                ->then(function ($v) { return array($v); })
+                            ->end()
+                            ->prototype('scalar')->end()
+                        ->end()
+                    ->end()
+                ->end()
             ->end();
 
         return $treeBuilder;

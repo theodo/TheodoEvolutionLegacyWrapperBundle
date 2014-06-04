@@ -18,7 +18,7 @@ class TheodoEvolutionLegacyWrapperBundle extends Bundle
     /**
      * @param ClassLoader $loader
      */
-    public function __construct(ClassLoader $loader)
+    public function __construct(ClassLoader $loader = null)
     {
         $this->loader = $loader;
     }
@@ -28,7 +28,10 @@ class TheodoEvolutionLegacyWrapperBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new LoaderInjectorPass($this->loader));
+        // The loader can be null when clearing the cache.
+        if (null !== $this->loader) {
+            $container->addCompilerPass(new LoaderInjectorPass($this->loader));
+        }
         $container->addCompilerPass(new ReplaceRouterPass());
     }
 }

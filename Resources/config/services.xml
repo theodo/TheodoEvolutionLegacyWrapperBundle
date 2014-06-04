@@ -26,8 +26,7 @@
         </service>
 
         <service id="theodo_evolution_legacy_wrapper.legacy_kernel.symfony14" class="%theodo_evolution_legacy_wrapper.legacy_kernel.symfony14.class%" public="false">
-            <argument type="string">%theodo_evolution_legacy_wrapper.legacy_path%</argument>
-            <argument type="service" id="theodo_evolution_legacy_wrapper.autoload.class_loader" />
+            <argument type="string">%theodo_evolution_legacy_wrapper.root_dir%</argument>
         </service>
         <service id="theodo_evolution_legacy_wrapper.legacy_kernel" alias="theodo_evolution_legacy_wrapper.legacy_kernel.symfony14" />
     </services>
