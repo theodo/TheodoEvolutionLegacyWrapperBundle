@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Theodo\Evolution\Bundle\LegacyWrapperBundle\Autoload\LegacyClassLoaderInterface;
 
 /**
  * Symfony14Kernel kernel handles.
@@ -31,13 +32,23 @@ class Symfony14Kernel implements LegacyKernelInterface
     private $configuration;
 
     /**
-     * @param $rootDir
+     * @var LegacyClassLoadrInterface
      */
-    public function __construct($rootDir)
+    private $classLoader;
+
+    /**
+     * @param $rootDir
+     * @param LegacyClassLoaderInterface $classLoader
+     */
+    public function __construct($rootDir, LegacyClassLoaderInterface $classLoader)
     {
         $this->rootDir  = $rootDir;
         $this->vendorPath  = $this->rootDir.'/lib/vendor';
         $this->isBooted    = false;
+
+        $classLoader->setKernel($this);
+        $this->classLoader = $classLoader;
+
     }
 
     /**
