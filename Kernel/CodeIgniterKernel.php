@@ -60,6 +60,30 @@ class CodeIgniterKernel implements LegacyKernelInterface
      */
     public function boot(ContainerInterface $container)
     {
+        if (empty($this->options)) {
+            throw new \RuntimeException('You must provide options for the CodeIgniter kernel.');
+        }
+
+        define('ENVIRONMENT', $this->options['environment']);
+
+        $system_path = realpath($this->getRootDir().'/system/');
+        $application_folder = $this->getRootDir().'/application';
+
+        // The name of THIS file
+        define('SELF', 'index.php');
+
+        // Path to the system folder
+        define('BASEPATH', str_replace("\\", "/", $system_path));
+
+        // Path to the front controller (this file)
+        define('FCPATH', $this->getRootDir());
+
+        // Name of the "system folder"
+        define('SYSDIR', trim(strrchr(trim(BASEPATH, '/'), '/'), '/'));
+
+        // The path to the "application" folder
+        define('APPPATH', $application_folder.'/');
+
         $this->isBooted = true;
     }
 
