@@ -26,7 +26,7 @@ class Configuration implements ConfigurationInterface
                     ->info('The path where the legacy app lives')
                     ->isRequired()
                 ->end()
-                ->scalarNode('kernel_id')->defaultValue('theodo_evolution_legacy_wrapper.legacy_kernel.symfony14')->end()
+                ->append($this->addKernelNode())
                 ->scalarNode('class_loader_id')->end()
                 ->arrayNode('assets')
                     ->canBeUnset()
@@ -35,17 +35,46 @@ class Configuration implements ConfigurationInterface
                         ->children()
                             ->scalarNode('base')->isRequired()->end()
                             ->arrayNode('directories')
-                            ->example(array('css', 'js', 'images'))
-                            ->beforeNormalization()
-                                ->ifTrue(function ($v) { return !is_array($v); })
-                                ->then(function ($v) { return array($v); })
+                                ->example(array('css', 'js', 'images'))
+                                ->beforeNormalization()
+                                    ->ifTrue(function ($v) { return !is_array($v); })
+                                    ->then(function ($v) { return array($v); })
+                                ->end()
+                                ->prototype('scalar')
                             ->end()
-                            ->prototype('scalar')->end()
                         ->end()
                     ->end()
                 ->end()
             ->end();
 
         return $treeBuilder;
+    }
+
+    public function addKernelNode()
+    {
+        $builder = new TreeBuilder();
+        $node = $builder->root('kernel');
+
+        $node
+            ->example('theodo_evolution_legacy_wrapper.legacy_kernel.symfony14')
+            ->beforeNormalization()
+                ->ifString()
+                ->then(function($v) { return array('id'=> $v); })
+            ->end()
+            ->children()
+                ->scalarNode('id')->end()
+                ->arrayNode('options')
+                    ->children()
+                        // Symfony 1.4 options
+                        ->scalarNode('application')->end()
+                        ->scalarNode('environment')->end()
+                        ->scalarNode('debug')->end()
+                    ->end()
+                    ->prototype('scalar')->end()
+                ->end()
+            ->end()
+        ;
+
+        return $node;
     }
 }

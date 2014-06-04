@@ -15,32 +15,48 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
     public function testProcessBasicConfiguration()
     {
+        $configs = $this->getBasicConfiguration();
+
+        $config = $this->process($configs);
+
+        $this->assertEquals('/foo/bar', $config['root_dir']);
+        $this->assertEquals('foo', $config['kernel']['id']);
+        $this->assertArrayNotHasKey('class_loader_id', $config);
+        $this->assertEmpty($config['assets']);
+    }
+
+    public function testProcessSymfony14KernelConfiguration()
+    {
         $configs = array(
             array(
-                'root_dir'  => '/foo/bar',
-                'kernel_id' => 'foo'
+                'root_dir' => '/foo',
+                'kernel'   => array(
+                    'id' => 'legacy_kernel.symfony14',
+                    'options' => array(
+                        'application' => 'bar',
+                        'environment' => '%kernel.environment%',
+                        'debug'       => '%kernel.debug%',
+                    )
+                )
             )
         );
 
         $config = $this->process($configs);
 
-        $this->assertEquals('/foo/bar', $config['root_dir']);
-        $this->assertEquals('foo', $config['kernel_id']);
-        $this->assertArrayNotHasKey('class_loader_id', $config);
-        $this->assertEmpty($config['assets']);
+        $this->assertEquals('legacy_kernel.symfony14', $config['kernel']['id']);
+        $this->assertArrayHasKey('application', $config['kernel']['options']);
+        $this->assertArrayHasKey('environment', $config['kernel']['options']);
+        $this->assertArrayHasKey('debug', $config['kernel']['options']);
     }
 
     public function testProcessBasicAssetsConfiguration()
     {
-        $configs = array(
-            array(
-                'root_dir'  => '/foo/bar',
-                'kernel_id' => 'foo',
-                'assets'    => array(
-                    'web' => array(
-                        'base' => '/web',
-                        'directories' => array('css', 'js')
-                    )
+        $configs   = $this->getBasicConfiguration();
+        $configs[0] += array(
+            'assets'    => array(
+                'web' => array(
+                    'base' => '/web',
+                    'directories' => array('css', 'js')
                 )
             )
         );
@@ -54,19 +70,16 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessMultipleAssetsConfiguration()
     {
-        $configs = array(
-            array(
-                'root_dir'  => '/foo/bar',
-                'kernel_id' => 'foo',
-                'assets'    => array(
-                    'foo' => array(
-                        'base' => '/foo',
-                        'directories' => array('css', 'js')
-                    ),
-                    'bar' => array(
-                        'base' => '/bar',
-                        'directories' => array('css', 'js')
-                    )
+        $configs   = $this->getBasicConfiguration();
+        $configs[0] += array(
+            'assets'    => array(
+                'foo' => array(
+                    'base' => '/foo',
+                    'directories' => array('css', 'js')
+                ),
+                'bar' => array(
+                    'base' => '/bar',
+                    'directories' => array('css', 'js')
                 )
             )
         );
@@ -88,6 +101,19 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $processor = new Processor();
 
         return $processor->processConfiguration(new Configuration(), $configs);
+    }
+
+    /**
+     * @return array
+     */
+    private function getBasicConfiguration()
+    {
+        return array(
+            array(
+                'root_dir' => '/foo/bar',
+                'kernel' => 'foo'
+            )
+        );
     }
 }
  
