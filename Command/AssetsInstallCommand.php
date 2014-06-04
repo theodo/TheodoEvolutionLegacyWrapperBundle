@@ -64,7 +64,7 @@ TEXT
             throw new \InvalidArgumentException('The symlink() function is not available on your system. You need to install the assets without the --symlink option.');
         }
 
-        $output->writeln(sprintf('Installing assets as <comment>%s</comment>', $input->getOption('symlink') ? 'symlinks' : 'hard copies'));
+        $output->writeln(sprintf('Installing legacy assets as <comment>%s</comment>', $input->getOption('symlink') ? 'symlinks' : 'hard copies'));
 
         /** @var LegacyKernelInterface $kernel */
         $kernel = $this->getContainer()->get('theodo_evolution_legacy_wrapper.legacy_kernel');
