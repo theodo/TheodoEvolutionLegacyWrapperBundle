@@ -16,6 +16,7 @@ interface LegacyKernelInterface extends HttpKernelInterface
     /**
      * Boot the legacy kernel.
      *
+     * @throws \RuntimeException
      * @param  ContainerInterface $container
      * @return mixed
      */
