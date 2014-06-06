@@ -99,6 +99,7 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
             } else {
                 // is_callable() returns TRUE on some versions of PHP 5 for private and protected
                 // methods, so we'll use this workaround for consistent behavior
+                // @todo return Symfony 404 responses
                 if (!in_array(strtolower($method), array_map('strtolower', get_class_methods($CI)))) {
                     // Check and see if we are using a 404 override and use it.
                     if (!empty($RTR->routes['404_override'])) {
@@ -143,13 +144,13 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
                 $CI->db->close();
             }
 
-            $content = ob_get_contents();
-            ob_end_flush();
+            ob_end_clean();
 
             // Restore the Symfony2 error handler
             restore_error_handler();
 
-            return new Response($content);
+           // @todo: transform the CodeIgniter response to a Symfony Response
+            return new Response($OUT->get_output());
 
         }
 
@@ -230,14 +231,14 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
             }
 
             // Start the timer... tick tock tick tock...
-            $BM =& load_class('Benchmark', 'core');
+            $BM = load_class('Benchmark', 'core');
             $BM->mark('total_execution_time_start');
             $BM->mark('loading_time:_base_classes_start');
             $GLOBALS['BM'] = $BM;
             $container->set('BM', $BM);
 
             // Instantiate the hooks class
-            $EXT =& load_class('Hooks', 'core');
+            $EXT = load_class('Hooks', 'core');
             $GLOBALS['EXT'] = $EXT;
             $container->set('EXT', $EXT);
 
@@ -245,7 +246,7 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
             $EXT->_call_hook('pre_system');
 
             // Instantiate the config class
-            $CFG =& load_class('Config', 'core');
+            $CFG = load_class('Config', 'core');
             $GLOBALS['CFG'] = $CFG;
             $container->set('CFG', $CFG);
 
@@ -255,17 +256,17 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
             }
 
             // Instantiate the UTF-8 class
-            $UNI =& load_class('Utf8', 'core');
+            $UNI = load_class('Utf8', 'core');
             $GLOBALS['UNI'] = $UNI;
             $container->set('UNI', $UNI);
 
             // Instantiate the URI class
-            $URI =& load_class('URI', 'core');
+            $URI = load_class('URI', 'core');
             $GLOBALS['URI'] = $URI;
             $container->set('URI', $URI);
 
             // Instantiate the routing class and set the routing
-            $RTR =& load_class('Router', 'core');
+            $RTR = load_class('Router', 'core');
             $RTR->_set_routing();
             $GLOBALS['RTR'] =$RTR;
             $container->set('RTR', $RTR);
@@ -276,7 +277,7 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
             }
 
             // Instantiate the output class
-            $OUT =& load_class('Output', 'core');
+            $OUT = load_class('Output', 'core');
             $GLOBALS['OUT'] = $OUT;
             $container->set('OUT', $OUT);
 
@@ -289,17 +290,17 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
             }
 
             // Load the security class for xss and csrf support
-            $SEC =& load_class('Security', 'core');
+            $SEC = load_class('Security', 'core');
             $GLOBALS['SEC'] = $SEC;
             $container->set('SEC', $SEC);
 
             // Load the Input class and sanitize globals
-            $IN =& load_class('Input', 'core');
+            $IN = load_class('Input', 'core');
             $GLOBALS['IN'] = $IN;
             $container->set('IN', $IN);
 
             // Load the Language class
-            $LANG =& load_class('Lang', 'core');
+            $LANG = load_class('Lang', 'core');
             $GLOBALS['LANG'] = $LANG;
             $container->set('LANG', $LANG);
         }
