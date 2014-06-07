@@ -14,7 +14,7 @@ use Theodo\Evolution\Bundle\LegacyWrapperBundle\Autoload\LegacyClassLoaderInterf
  * 
  * @author Benjamin Grandfond <benjaming@theodo.fr>
  */
-class Symfony14Kernel implements LegacyKernelInterface
+class Symfony14Kernel extends LegacyKernel
 {
     /**
      * @var string

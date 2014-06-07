@@ -11,28 +11,8 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
     use Symfony\Component\HttpFoundation\Response;
     use Theodo\Evolution\Bundle\LegacyWrapperBundle\Autoload\LegacyClassLoaderInterface;
 
-    class CodeIgniterKernel implements LegacyKernelInterface
+    class CodeIgniterKernel extends LegacyKernel
     {
-        /**
-         * @var string
-         */
-        private $rootDir;
-
-        /**
-         * @var boolean
-         */
-        private $isBooted = false;
-
-        /**
-         * @var array
-         */
-        private $options = array();
-
-        /**
-         * @var LegacyClassLoaderInterface
-         */
-        private $classLoader;
-
         /**
          * @var ContainerInterface
          */
@@ -225,46 +205,6 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
         }
 
         /**
-         * Check whether the legacy kernel is already booted or not.
-         *
-         * @return boolean
-         */
-        public function isBooted()
-        {
-            return $this->isBooted;
-        }
-
-        /**
-         * Return the directory where the legacy app lives.
-         *
-         * @return string
-         */
-        public function getRootDir()
-        {
-            return $this->rootDir;
-        }
-
-        /**
-         * Set the directory where the legacy app lives.
-         *
-         * @param string $rootDir
-         */
-        public function setRootDir($rootDir)
-        {
-            $this->rootDir = $rootDir;
-        }
-
-        /**
-         * {@inheritdoc}
-         */
-        public function setClassLoader(LegacyClassLoaderInterface $classLoader)
-        {
-            $classLoader->setKernel($this);
-            $this->classLoader = $classLoader;
-        }
-
-
-        /**
          * Return the name of the kernel.
          *
          * @return string
@@ -272,16 +212,6 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
         public function getName()
         {
             return 'codeigniter';
-        }
-
-        /**
-         * Set kernel options
-         *
-         * @param array $options
-         */
-        public function setOptions(array $options = array())
-        {
-            $this->options = $options;
         }
 
         /**
