@@ -1,6 +1,6 @@
 <?php
 
-namespace Kernel;
+namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Tests\Kernel;
 
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTestCase;
