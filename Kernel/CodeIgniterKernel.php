@@ -32,6 +32,8 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
          */
         public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = true)
         {
+            $response = new Response();
+
             global $CFG, $RTR, $BM, $EXT, $CI, $URI, $OUT;
 
             ob_start();
@@ -50,9 +52,7 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
             // Note: The Router class automatically validates the controller path using the router->_validate_request().
             // If this include fails it means that the default controller in the Routes.php file is not resolving to something valid.
             if (!file_exists(APPPATH . 'controllers/' . $RTR->fetch_directory() . $RTR->fetch_class() . '.php')) {
-                show_error(
-                    'Unable to load your default controller. Please make sure the controller specified in your Routes.php file is valid.'
-                );
+                throw new CodeIgniterException('Unable to load your default controller. Please make sure the controller specified in your Routes.php file is valid.');
             }
 
             include(APPPATH . 'controllers/' . $RTR->fetch_directory() . $RTR->fetch_class() . '.php');
@@ -74,13 +74,15 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
                     $method = (isset($x[1]) ? $x[1] : 'index');
                     if (!class_exists($class)) {
                         if (!file_exists(APPPATH . 'controllers/' . $class . '.php')) {
-                            show_404("{$class}/{$method}");
+                            $response->setStatusCode(404);
+                            $response->setContent("The {$class}/{$method} does not exist in CodeIgniter.");
                         }
 
                         include_once(APPPATH . 'controllers/' . $class . '.php');
                     }
                 } else {
-                    show_404("{$class}/{$method}");
+                    $response->setStatusCode(404);
+                    $response->setContent("The {$class}/{$method} does not exist in CodeIgniter.");
                 }
             }
 
@@ -103,7 +105,6 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
             } else {
                 // is_callable() returns TRUE on some versions of PHP 5 for private and protected
                 // methods, so we'll use this workaround for consistent behavior
-                // @todo return Symfony 404 responses
                 if (!in_array(strtolower($method), array_map('strtolower', get_class_methods($CI)))) {
                     // Check and see if we are using a 404 override and use it.
                     if (!empty($RTR->routes['404_override'])) {
@@ -112,7 +113,8 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
                         $method = (isset($x[1]) ? $x[1] : 'index');
                         if (!class_exists($class)) {
                             if (!file_exists(APPPATH . 'controllers/' . $class . '.php')) {
-                                show_404("{$class}/{$method}");
+                                $response->setStatusCode(404);
+                                $response->setContent("The {$class}/{$method} does not exist in CodeIgniter.");
                             }
 
                             include_once(APPPATH . 'controllers/' . $class . '.php');
@@ -120,7 +122,8 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
                             $CI = new $class();
                         }
                     } else {
-                        show_404("{$class}/{$method}");
+                        $response->setStatusCode(404);
+                        $response->setContent("The {$class}/{$method} does not exist in CodeIgniter.");
                     }
                 }
 
@@ -153,9 +156,11 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
             // Restore the Symfony2 error handler
             restore_error_handler();
 
-           // @todo: transform the CodeIgniter response to a Symfony Response
-            return new Response($OUT->get_output());
+            if (404 !== $response->getStatusCode()) {
+                $response->setContent($OUT->get_output());
+            }
 
+            return $response;
         }
 
         /**
@@ -284,7 +289,6 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
 
             // Is there a valid cache file?  If so, we're done...
             if ($EXT->_call_hook('cache_override') === false) {
-                // @todo: move this somewhere else ?
                 if ($OUT->_display_cache($CFG, $URI) == true) {
                     exit;
                 }
