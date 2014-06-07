@@ -48,7 +48,12 @@ class Symfony14Kernel extends LegacyKernel
         $environment = $this->options['environment'];
         $debug = $this->options['debug'];
 
-        $this->configuration = \ProjectConfiguration::getApplicationConfiguration($application, $environment, $debug);
+        $this->configuration = \ProjectConfiguration::getApplicationConfiguration(
+            $application,
+            $environment,
+            $debug,
+            $this->getRootDir()
+        );
 
         $this->isBooted = true;
     }
@@ -89,41 +94,6 @@ class Symfony14Kernel extends LegacyKernel
     public function getName()
     {
         return 'symfony14';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getRootDir()
-    {
-        return $this->rootDir;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRootDir($rootDir)
-    {
-        $this->rootDir = $rootDir;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setClassLoader(LegacyClassLoaderInterface $classLoader)
-    {
-        $classLoader->setKernel($this);
-        $this->classLoader = $classLoader;
-    }
-
-    /**
-     * Set kernel options
-     *
-     * @param array $options
-     */
-    public function setOptions(array $options = array())
-    {
-        $this->options = $options;
     }
 
     /**

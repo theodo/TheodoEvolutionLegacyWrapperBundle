@@ -23,7 +23,7 @@ class Symfony14KernelTest extends ProphecyTestCase
         $classLoader->autoload()->shouldBeCalled();
 
         $kernel = new Symfony14Kernel();
-        $kernel->setRootDir(__DIR__.'/fixtures/symfony14');
+        $kernel->setRootDir($_ENV['THEODO_EVOLUTION_FAKE_PROJECTS'].'/symfony14');
         $kernel->setClassLoader($classLoader->reveal());
         $kernel->setOptions(array(
             'application' => 'frontend',
