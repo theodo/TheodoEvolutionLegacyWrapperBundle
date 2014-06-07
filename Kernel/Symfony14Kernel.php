@@ -17,36 +17,9 @@ use Theodo\Evolution\Bundle\LegacyWrapperBundle\Autoload\LegacyClassLoaderInterf
 class Symfony14Kernel extends LegacyKernel
 {
     /**
-     * @var string
-     */
-    private $rootDir;
-
-    /**
-     * @var boolean
-     */
-    private $isBooted;
-
-    /**
      * @var \sfApplicationConfiguration
      */
     private $configuration;
-
-    /**
-     * @var LegacyClassLoadrInterface
-     */
-    private $classLoader;
-
-    /**
-     * @var array
-     */
-    private $options = array();
-
-    public function __construct($rootDir)
-    {
-        $this->rootDir  = $rootDir;
-        $this->vendorPath  = $this->rootDir.'/lib/vendor';
-        $this->isBooted    = false;
-    }
 
     /**
      * {@inheritdoc}

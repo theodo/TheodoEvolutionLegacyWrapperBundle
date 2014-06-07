@@ -22,7 +22,8 @@ class Symfony14KernelTest extends ProphecyTestCase
         $classLoader->isAutoloaded()->willReturn(false);
         $classLoader->autoload()->shouldBeCalled();
 
-        $kernel = new Symfony14Kernel(__DIR__.'/fixtures/symfony14', $classLoader->reveal());
+        $kernel = new Symfony14Kernel();
+        $kernel->setRootDir(__DIR__.'/fixtures/symfony14');
         $kernel->setClassLoader($classLoader->reveal());
         $kernel->setOptions(array(
             'application' => 'frontend',
