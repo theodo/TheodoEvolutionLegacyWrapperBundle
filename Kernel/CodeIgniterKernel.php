@@ -35,6 +35,10 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
             global $CFG, $RTR, $BM, $EXT, $CI, $URI, $OUT;
 
             ob_start();
+
+            // Set the error handler of CodeIgniter
+            set_error_handler('_exception_handler');
+
             // Load the app controller and local controller
             require_once BASEPATH . 'core/Controller.php';
 
@@ -216,9 +220,6 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
             } else {
                 require_once(APPPATH . 'config/constants.php');
             }
-
-            // @todo: move this in the handle method
-            set_error_handler('_exception_handler');
 
             // Set the subclass_prefix
             if (isset($assign_to_config['subclass_prefix']) AND $assign_to_config['subclass_prefix'] != '') {
