@@ -19,6 +19,10 @@
         </testsuite>
     </testsuites>
 
+    <php>
+        <env name="THEODO_EVOLUTION_FAKE_PROJECTS" value="./vendor/theodo-evolution/fake-projects" />
+    </php>
+
     <filter>
         <whitelist>
             <directory>./</directory>
