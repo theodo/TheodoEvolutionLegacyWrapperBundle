@@ -5,6 +5,7 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Theodo\Evolution\Bundle\LegacyWrapperBundle\Autoload\LegacyClassLoaderInterface;
 
 /**
  * The LegacyKernel allows the legacy project to boot and handle the HTTP request.
@@ -42,6 +43,13 @@ interface LegacyKernelInterface extends HttpKernelInterface
      * @param string $rootDir
      */
     public function setRootDir($rootDir);
+
+    /**
+     * Set the class loader to use to load the legacy project.
+     *
+     * @param LegacyClassLoaderInterface $classLoader
+     */
+    public function setClassLoader(LegacyClassLoaderInterface $classLoader);
 
     /**
      * Return the name of the kernel.

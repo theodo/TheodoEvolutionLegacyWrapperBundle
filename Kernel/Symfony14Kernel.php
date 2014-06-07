@@ -41,19 +41,11 @@ class Symfony14Kernel implements LegacyKernelInterface
      */
     private $options = array();
 
-    /**
-     * @param $rootDir
-     * @param LegacyClassLoaderInterface $classLoader
-     */
-    public function __construct($rootDir, LegacyClassLoaderInterface $classLoader)
+    public function __construct($rootDir)
     {
         $this->rootDir  = $rootDir;
         $this->vendorPath  = $this->rootDir.'/lib/vendor';
         $this->isBooted    = false;
-
-        $classLoader->setKernel($this);
-        $this->classLoader = $classLoader;
-
     }
 
     /**
@@ -67,6 +59,10 @@ class Symfony14Kernel implements LegacyKernelInterface
 
         if ($this->isBooted()) {
             return;
+        }
+
+        if (empty($this->classLoader)) {
+            throw new \RuntimeException('You must provide a class loader to the Symfony 1.4 kernel.');
         }
 
         if (!$this->classLoader->isAutoloaded()) {
@@ -136,6 +132,15 @@ class Symfony14Kernel implements LegacyKernelInterface
     public function setRootDir($rootDir)
     {
         $this->rootDir = $rootDir;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setClassLoader(LegacyClassLoaderInterface $classLoader)
+    {
+        $classLoader->setKernel($this);
+        $this->classLoader = $classLoader;
     }
 
     /**

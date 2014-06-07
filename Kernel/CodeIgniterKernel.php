@@ -9,6 +9,7 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
     use Symfony\Component\DependencyInjection\ContainerInterface;
     use Symfony\Component\HttpFoundation\Request;
     use Symfony\Component\HttpFoundation\Response;
+    use Theodo\Evolution\Bundle\LegacyWrapperBundle\Autoload\LegacyClassLoaderInterface;
 
     class CodeIgniterKernel implements LegacyKernelInterface
     {
@@ -26,6 +27,16 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
          * @var array
          */
         private $options = array();
+
+        /**
+         * @var LegacyClassLoaderInterface
+         */
+        private $classLoader;
+
+        /**
+         * @var ContainerInterface
+         */
+        private $container;
 
         /**
          * {@inheritdoc}
@@ -172,8 +183,12 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
                 throw new \RuntimeException('You must provide options for the CodeIgniter kernel.');
             }
 
+            $this->container = $container;
+
             // Defines constants as it is done in the index.php file of your CodeIgniter project.
             define('ENVIRONMENT', $this->options['environment']);
+            define('CI_VERSION', $this->options['version']);
+            define('CI_CORE', $this->options['core']);
 
             // The name of the front controller
             define('SELF', trim($container->get('request_stack')->getCurrentRequest()->getBaseUrl(), '/'));
@@ -194,120 +209,19 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
             // The path to the "application" folder
             define('APPPATH', $this->getRootDir() . '/application/');
 
+            // The path to the "sparks" folder
             define('SPARKPATH', $this->getRootDir() . '/sparks/');
 
-            $this->initialize($container);
+
+            if (empty($this->classLoader)) {
+                throw new \RuntimeException('You must provide a class loader to the CodeIgniter kernel.');
+            }
+
+            if (!$this->classLoader->isAutoloaded()) {
+                $this->classLoader->autoload();
+            }
 
             $this->isBooted = true;
-        }
-
-        /**
-         * This methods initialize CodeIngiter. It has been copied/pasted
-         * and tweaked from a core/CodeIgniter file from CodeIgniter 2.1.2.
-         *
-         * @param ContainerInterface $container
-         */
-        private function initialize(ContainerInterface $container)
-        {
-            //@todo what to do with the CI version and core vars ?
-            define('CI_VERSION', $this->options['version']);
-            define('CI_CORE', $this->options['core']);
-
-            // Declare CodeIgniter global variables
-            //, $EXT, $CFG, $UNI, $URI, $RTR, $OUT, $SEC, $IN, $LANG;
-
-            // Load the global functions
-            require_once(BASEPATH . 'core/Common.php');
-
-            // Load the framework constants
-            if (defined('ENVIRONMENT') AND file_exists(APPPATH . 'config/' . ENVIRONMENT . '/constants.php')) {
-                require_once(APPPATH . 'config/' . ENVIRONMENT . '/constants.php');
-            } else {
-                require_once(APPPATH . 'config/constants.php');
-            }
-
-            // Set the subclass_prefix
-            if (isset($assign_to_config['subclass_prefix']) AND $assign_to_config['subclass_prefix'] != '') {
-                get_config(array('subclass_prefix' => $assign_to_config['subclass_prefix']));
-            }
-
-            // Set a liberal script execution time limit
-            if (function_exists("set_time_limit") == true AND @ini_get("safe_mode") == 0) {
-                @set_time_limit(300);
-            }
-
-            // Start the timer... tick tock tick tock...
-            $BM = load_class('Benchmark', 'core');
-            $BM->mark('total_execution_time_start');
-            $BM->mark('loading_time:_base_classes_start');
-            $GLOBALS['BM'] = $BM;
-            $container->set('BM', $BM);
-
-            // Instantiate the hooks class
-            $EXT = load_class('Hooks', 'core');
-            $GLOBALS['EXT'] = $EXT;
-            $container->set('EXT', $EXT);
-
-            // Is there a "pre_system" hook?
-            $EXT->_call_hook('pre_system');
-
-            // Instantiate the config class
-            $CFG = load_class('Config', 'core');
-            $GLOBALS['CFG'] = $CFG;
-            $container->set('CFG', $CFG);
-
-            // Do we have any manually set config items in the index.php file?
-            if (isset($assign_to_config)) {
-                $CFG->_assign_to_config($assign_to_config);
-            }
-
-            // Instantiate the UTF-8 class
-            $UNI = load_class('Utf8', 'core');
-            $GLOBALS['UNI'] = $UNI;
-            $container->set('UNI', $UNI);
-
-            // Instantiate the URI class
-            $URI = load_class('URI', 'core');
-            $GLOBALS['URI'] = $URI;
-            $container->set('URI', $URI);
-
-            // Instantiate the routing class and set the routing
-            $RTR = load_class('Router', 'core');
-            $RTR->_set_routing();
-            $GLOBALS['RTR'] =$RTR;
-            $container->set('RTR', $RTR);
-
-            // Set any routing overrides that may exist in the main index file
-            if (isset($routing)) {
-                $RTR->_set_overrides($routing);
-            }
-
-            // Instantiate the output class
-            $OUT = load_class('Output', 'core');
-            $GLOBALS['OUT'] = $OUT;
-            $container->set('OUT', $OUT);
-
-            // Is there a valid cache file?  If so, we're done...
-            if ($EXT->_call_hook('cache_override') === false) {
-                if ($OUT->_display_cache($CFG, $URI) == true) {
-                    exit;
-                }
-            }
-
-            // Load the security class for xss and csrf support
-            $SEC = load_class('Security', 'core');
-            $GLOBALS['SEC'] = $SEC;
-            $container->set('SEC', $SEC);
-
-            // Load the Input class and sanitize globals
-            $IN = load_class('Input', 'core');
-            $GLOBALS['IN'] = $IN;
-            $container->set('IN', $IN);
-
-            // Load the Language class
-            $LANG = load_class('Lang', 'core');
-            $GLOBALS['LANG'] = $LANG;
-            $container->set('LANG', $LANG);
         }
 
         /**
@@ -341,6 +255,16 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
         }
 
         /**
+         * {@inheritdoc}
+         */
+        public function setClassLoader(LegacyClassLoaderInterface $classLoader)
+        {
+            $classLoader->setKernel($this);
+            $this->classLoader = $classLoader;
+        }
+
+
+        /**
          * Return the name of the kernel.
          *
          * @return string
@@ -358,6 +282,14 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
         public function setOptions(array $options = array())
         {
             $this->options = $options;
+        }
+
+        /**
+         * @return \Symfony\Component\DependencyInjection\ContainerInterface
+         */
+        public function getContainer()
+        {
+            return $this->container;
         }
     }
 }
