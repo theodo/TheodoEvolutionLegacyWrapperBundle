@@ -210,8 +210,8 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
         private function initialize(ContainerInterface $container)
         {
             //@todo what to do with the CI version and core vars ?
-            define('CI_VERSION', '2.1.2');
-            define('CI_CORE', false);
+            define('CI_VERSION', $this->options['version']);
+            define('CI_CORE', $this->options['core']);
 
             // Declare CodeIgniter global variables
             //, $EXT, $CFG, $UNI, $URI, $RTR, $OUT, $SEC, $IN, $LANG;

@@ -49,6 +49,90 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('debug', $config['kernel']['options']);
     }
 
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testProcessInvalidSymfony14KernelConfiguration()
+    {
+        $configs = array(
+            array(
+                'root_dir' => '/foo',
+                'kernel'   => array(
+                    'id' => 'legacy_kernel.symfony14',
+                    'options' => array(
+                        'application' => 'bar',
+                    )
+                )
+            )
+        );
+
+        $this->process($configs);
+    }
+
+    public function testProcessCodeIgniterKernelConfiguration()
+    {
+        $configs = array(
+            array(
+                'root_dir' => '/foo',
+                'kernel'   => array(
+                    'id' => 'legacy_kernel.codeigniter',
+                    'options' => array(
+                        'environment' => '%kernel.environment%',
+                        'version'     => '2.1.2',
+                        'core'        => false,
+                    )
+                )
+            )
+        );
+
+        $config = $this->process($configs);
+
+        $this->assertEquals('legacy_kernel.codeigniter', $config['kernel']['id']);
+        $this->assertArrayHasKey('environment', $config['kernel']['options']);
+        $this->assertArrayHasKey('version', $config['kernel']['options']);
+        $this->assertArrayHasKey('core', $config['kernel']['options']);
+        $this->assertArrayNotHasKey('application', $config['kernel']['options']);
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testProcessInvalidaCodeIgniterKernelConfiguration()
+    {
+        $configs = array(
+            array(
+                'root_dir' => '/foo',
+                'kernel'   => array(
+                    'id' => 'legacy_kernel.codeigniter',
+                    'options' => array(
+                        'environment' => '%kernel.environment%',
+                    )
+                )
+            )
+        );
+
+        $this->process($configs);
+    }
+
+    public function testProcessCustomKernelConfiguration()
+    {
+        $configs = array(
+            array(
+                'root_dir' => '/foo',
+                'kernel'   => array(
+                    'id' => 'my_kernel',
+                    'options' => array(
+                        'foo' => 'bar',
+                    )
+                )
+            )
+        );
+
+        $config = $this->process($configs);
+
+        $this->assertArrayHasKey('foo', $config['kernel']['options']);
+    }
+
     public function testProcessBasicAssetsConfiguration()
     {
         $configs   = $this->getBasicConfiguration();
