@@ -5,14 +5,19 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Tests\Kernel;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Theodo\Evolution\Bundle\LegacyWrapperBundle\Autoload\CodeIgniterClassLoader;
 use Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel\CodeIgniterKernel;
 
 class CodeIgniterKernelTest extends ProphecyTestCase
 {
-    public function testShouldBoot()
+    public function testShouldBootAndHandleRequest()
     {
-        $request = new Request();
+        $session = new Session(new MockArraySessionStorage());
+        $request = Request::create('/');
+        $request->setSession($session);
+
         $requestStack = $this->prophesize('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->getCurrentRequest()->willReturn($request);
 
@@ -41,6 +46,11 @@ class CodeIgniterKernelTest extends ProphecyTestCase
         $this->assertArrayHasKey('RTR', $GLOBALS);
         $this->assertArrayHasKey('OUT', $GLOBALS);
         $this->assertArrayHasKey('SEC', $GLOBALS);
+
+        $response = $kernel->handle($request, 1, true);
+
+        $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $response);
+        $this->assertEquals(200, $response->getStatusCode());
     }
 }
  
