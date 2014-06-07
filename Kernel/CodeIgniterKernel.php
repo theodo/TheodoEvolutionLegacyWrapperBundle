@@ -176,7 +176,7 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
             define('ENVIRONMENT', $this->options['environment']);
 
             // The name of the front controller
-            define('SELF', 'app.php');
+            define('SELF', trim($container->get('request_stack')->getCurrentRequest()->getBaseUrl(), '/'));
 
             // The PHP file extension
             // this global constant is deprecated but used in some third party modules of CodeIgniter
