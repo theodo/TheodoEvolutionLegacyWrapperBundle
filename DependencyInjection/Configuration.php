@@ -73,6 +73,32 @@ class Configuration implements ConfigurationInterface
                     ->prototype('scalar')->end()
                 ->end()
             ->end()
+            ->validate()
+                ->ifTrue(function($v) {
+                    // Validate symfony 1 configuration
+                    if (strpos($v['id'], 'symfony1')) {
+                        return !isset(
+                            $v['options']['application'],
+                            $v['options']['environment'],
+                            $v['options']['debug']
+                        );
+                    }
+                })
+                ->thenInvalid('To use the symfony1 kernel you must set an application, environment and debug options.')
+            ->end()
+            ->validate()
+                ->ifTrue(function($v) {
+                    // Validate CodeIgniter configuration
+                    if (strpos($v['id'], 'codeigniter')) {
+                        return !isset(
+                            $v['options']['environment'],
+                            $v['options']['version'],
+                            $v['options']['core']
+                        );
+                    }
+                })
+                ->thenInvalid('To use the codeigniter kernel you must set an environment a version and a core options.')
+            ->end()
         ;
 
         return $node;

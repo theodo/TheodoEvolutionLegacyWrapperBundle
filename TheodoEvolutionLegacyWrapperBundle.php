@@ -5,6 +5,7 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle;
 use Composer\Autoload\ClassLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Theodo\Evolution\Bundle\LegacyWrapperBundle\DependencyInjection\Compiler\KernelConfigurationPass;
 use Theodo\Evolution\Bundle\LegacyWrapperBundle\DependencyInjection\Compiler\LoaderInjectorPass;
 use Theodo\Evolution\Bundle\LegacyWrapperBundle\DependencyInjection\Compiler\ReplaceRouterPass;
 
@@ -32,6 +33,8 @@ class TheodoEvolutionLegacyWrapperBundle extends Bundle
         if (null !== $this->loader) {
             $container->addCompilerPass(new LoaderInjectorPass($this->loader));
         }
+
+        $container->addCompilerPass(new KernelConfigurationPass());
         $container->addCompilerPass(new ReplaceRouterPass());
     }
 }

@@ -1,65 +1,126 @@
 Autoloading
 ===========
 
-To autoload your legacy project you will need to create a ``LegacyClassLoader`` that will call
-its autoloading mechanism only when the RouterListener will call the legacy kernel
-to handle the request. This way, the legacy project will never been autoloaded if
-not required.
+The autoloading of the legacy application is done from the ``boot`` method of the legacy
+kernel, called by the ``LegacyBooterListener``.
 
-To create your own legacy class loader you must create a class that implements the
-the ``LegacyClassLoaderInterface`` which defines the ``autoload`` method. This is where
-you would implement the legacy autoloading stuff. This method will be called by the
-``RouterListener`` before handling the request as the legacy project would do.
+There are many ways to autoload a PHP project. The legacy project can be autoloaded:
+ * requiring a PHP file
+ * instantiating the main class of the framework
+ * using composer
+ * ...
 
-You can also implement the ``ComposerLoaderAwareInterface`` which allows you to inject the
-autoloader provided by Composer. This methods will do more or less the same thing as the
-generated ``autoload_real.php`` file does.
-
-**NOTE:** if you want to use the autoloader of Composer your ``AppKernel`` class  must
-extend the ``EvolutionKernel``, see `the installation documentation`_.
-
-.. _the installation documentation: index.rst#configuration
-
-
-Example
-=======
-
-Here is an example of a legacy class loader for `symfony 1.5 <https://github.com/LExpress/symfony1>`:
+Regardless the way the legacy code is autoloaded, you will have to do it by yourself.
+To do so you will have to create a ``class loader`` which must implement the
+``LegacyClassLoaderInterface``:
 
 ::
 
-    namespace Acme\Bundle\LegacyBundle\Autoload;
-    
-    use Composer\Autoload\ClassLoader;
-    use Theodo\Evolution\Bundle\LegacyWrapperBundle\Autoload\ComposerLoaderAwareInterface;
-    use Theodo\Evolution\Bundle\LegacyWrapperBundle\Autoload\LegacyClassLoaderInterface;
-    
-    /**
-     * AcmeLegacyClassLoader autoloads the symfony >=1.4 framework when it uses Composer as
-     * dependency manager.
-     * 
-     * @author Benjamin Grandfond <benjaming@theodo.fr>
-     */
-    class AcmeLegacyClassLoader implements ComposerLoaderAwareInterface, LegacyClassLoaderInterface
+    namespace Acme\MyLegacyBundle\Autoload;
+
+    use Theodo\Evolution\Bundle\LegacyWrapperBundle\Autoload\LegacyKernelInterface;
+
+    class MyLegacyClassLoader implements LegacyClassLoaderInterface
     {
         /**
-         * @var string
+         * @var LegacyKernelInterface
          */
-        private $legacyPath;
-    
+        private $kernel;
+
+        /**
+         * {@inheritdoc}
+         */
+        public function autoload()
+        {
+            // require the legacy autoload php file.
+            require_once $this->kernel->getRootDir().'/autoload.php';
+
+            $this->isAutoloaded = true;
+        }
+
+        /**
+         * {@inheritdoc}
+         */
+        public function isAutoloaded()
+        {
+            return $this->isAutoloaded;
+        }
+
+        /**
+         * {@inheritdoc}
+         */
+        public function setKernel(LegacyKernelInterface $kernel)
+        {
+            $this->kernel = $kernel;
+        }
+    }
+
+Declare this class as a service:
+
+::
+    <parameters>
+        <parameter key="my_legacy.autoload.my_legacy_class_loader.class">Acme\MyLegacyBundle\Autoload\MyLegacyClassLoader</parameter>
+    </parameters>
+
+    <services>
+        <service id="my_legacy.autoload.my_legacy_class_loader" class="%my_legacy.autoload.my_legacy_class_loader.class%">
+        </service>
+    </services>
+
+Then you will have to configure the bundle to use your class loader service:
+
+::
+
+    theodo_evolution_legacy_wrapper:
+        # ...
+        class_loader_id: my_legacy.autoload.my_legacy_class_loader
+
+Legacy with Composer
+====================
+
+If you are lucky, the legacy project could use Composer. This will ease your work a lot.
+The bundle provides you a way to use Composer from the legacy kernel.
+
+First your AppKernel must extends the ``EvolutionKernel``:
+
+::
+
+    use Theodo\Evolution\Bundle\LegacyWrapperBundle\HttpKernel\EvolutionKernel;
+
+    class AppKernel extends EvolutionKernel
+    {
+        // ...
+    }
+
+Then make sure to set the ``loader`` to the kernel from the front controller ``web/app.php``,
+``web/app_dev.php`` and ``app/console``:
+
+::
+
+    // ...
+    $loader = require_once __DIR__.'/../app/bootstrap.php.cache';
+
+    // ...
+
+    $kernel = new AppKernel('dev', true);
+    $kernel->setLoader($loader);
+
+Your class loader service must implement the ``ComposerLoaderAwareInterface``
+to inject the autoloader provided by Composer in it.
+
+::
+
+    class MyLegacyClassLoader implements LegacyClassLoaderInterface, ComposerLoaderAwareInterface
+    {
+        // ... other properties
+
         /**
          * @var ClassLoader
          */
         private $loader;
-    
-        /**
-         * @param string $legacyPath The path to the legacy project
-         */
-        public function __construct($legacyPath)
-        {
-            $this->legacyPath = $legacyPath;
-        }
-    
+
+        // ... other methods
+
         /**
          * @param ClassLoader $loader
          * @return mixed
@@ -68,49 +129,50 @@ Here is an example of a legacy class loader for `symfony 1.5 <https://github.com
         {
             $this->loader = $loader;
         }
-    
-        /**
-         * {@inheritdoc}
-         */
-        public function autoload()
-        {
-            $composerDir = realpath($this->legacyPath.'/lib/vendor/composer');
-    
-            $map = require $composerDir . '/autoload_namespaces.php';
-            $prefixes = $this->loader->getPrefixes();
-            foreach ($map as $namespace => $path) {
-                if (!array_key_exists($namespace, $prefixes)) {
-                    $this->loader->set($namespace, $path);
-                }
-            }
-    
-            $classMap = require $composerDir . '/autoload_classmap.php';
-            if ($classMap) {
-                $this->loader->addClassMap($classMap);
-            }
-    
-            $includeFiles = require $composerDir . '/autoload_files.php';
-            foreach ($includeFiles as $file) {
-                if (false === strpos($file, 'swiftmailer')) {
-                    require $file;
-                }
-            }
-        }
     }
 
-And the service configuration:
+Don't forget to change the service definition and add the ``loader_aware`` tag:
+
+::
+    <parameters>
+        <parameter key="my_legacy.autoload.my_legacy_class_loader.class">Acme\MyLegacyBundle\Autoload\MyLegacyClassLoader</parameter>
+    </parameters>
+
+    <services>
+        <service id="my_legacy.autoload.my_legacy_class_loader" class="%my_legacy.autoload.my_legacy_class_loader.class%">
+            <tag name="loader_aware" />
+        </service>
+    </services>
+
+Finally, you can use the ``autoload`` generated by Composer from the legacy application and remove, add some classes or library:
 
 ::
 
-    acme_legacy.autoload.legacy_class_loader:
-        class: %acme_legacy.autoload.legacy_class_loader.class%
-        arguments:
-            - %theodo_evolution_legacy_wrapper.legacy_path%
-        tags:
-            - loader_aware
+    /**
+     * {@inheritdoc}
+     */
+    public function autoload()
+    {
+        $composerDir = realpath($this->legacyPath.'/lib/vendor/composer');
 
+        $map = require $composerDir . '/autoload_namespaces.php';
+        $prefixes = $this->loader->getPrefixes();
+        foreach ($map as $namespace => $path) {
+            if (!array_key_exists($namespace, $prefixes)) {
+                $this->loader->set($namespace, $path);
+            }
+        }
 
-This example uses the generated files by Composer in the legacy project to load namespaced classes,
-"class mapped" classes and require files that autoload libraries (i.e. Swift Mailer). In this
-example it does not require Swift Mailer autoloading file because Symfony 2 also comes with it by
-default. Thus it would generate a "PHP Fatal error: Cannot redeclare class Swift".
+        $classMap = require $composerDir . '/autoload_classmap.php';
+        if ($classMap) {
+            $this->loader->addClassMap($classMap);
+        }
+
+        $includeFiles = require $composerDir . '/autoload_files.php';
+        foreach ($includeFiles as $file) {
+            // Don't autoload the legacy SwiftMailer as it is autoloaded with the SwiftMailerBundle
+            if (false === strpos($file, 'swiftmailer')) {
+                require $file;
+            }
+        }
+    }

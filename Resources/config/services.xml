@@ -6,6 +6,8 @@
 
     <parameters>
         <parameter key="theodo_evolution_legacy_wrapper.legacy_kernel.symfony14.class">Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel\Symfony14Kernel</parameter>
+        <parameter key="theodo_evolution_legacy_wrapper.legacy_kernel.codeigniter.class">Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel\CodeIgniterKernel</parameter>
+        <parameter key="theodo_evolution_legacy_wrapper.autoload.codeigniter_class_loader.class">Theodo\Evolution\Bundle\LegacyWrapperBundle\Autoload\CodeIgniterClassLoader</parameter>
         <parameter key="theodo_evolution_legacy_wrapper.router_listener.class">Theodo\Evolution\Bundle\LegacyWrapperBundle\EventListener\RouterListener</parameter>
         <parameter key="theodo_evolution_legacy_wrapper.legacy_booter_listener.class">Theodo\Evolution\Bundle\LegacyWrapperBundle\EventListener\LegacyBooterListener</parameter>
     </parameters>
@@ -25,10 +27,31 @@
             <argument type="service" id="service_container" />
         </service>
 
-        <service id="theodo_evolution_legacy_wrapper.legacy_kernel.symfony14" class="%theodo_evolution_legacy_wrapper.legacy_kernel.symfony14.class%" public="false">
-            <argument type="string">%theodo_evolution_legacy_wrapper.root_dir%</argument>
-            <argument type="service" id="theodo_evolution_legacy_wrapper.autoload.class_loader" />
+        <service id="theodo_evolution_legacy_wrapper.legacy_kernel.abstract" abstract="true">
+            <call method="setRootDir">
+                <argument type="string">%theodo_evolution_legacy_wrapper.root_dir%</argument>
+            </call>
+            <call method="setClassLoader">
+                <argument type="service" id="theodo_evolution_legacy_wrapper.autoload.class_loader" />
+            </call>
         </service>
+
+        <service
+            id="theodo_evolution_legacy_wrapper.legacy_kernel.symfony14"
+            class="%theodo_evolution_legacy_wrapper.legacy_kernel.symfony14.class%"
+            public="false"
+            parent="theodo_evolution_legacy_wrapper.legacy_kernel.abstract"
+        />
+
+        <service
+            id="theodo_evolution_legacy_wrapper.legacy_kernel.codeigniter"
+            class="%theodo_evolution_legacy_wrapper.legacy_kernel.codeigniter.class%"
+            public="false"
+            parent="theodo_evolution_legacy_wrapper.legacy_kernel.abstract"
+        />
+
         <service id="theodo_evolution_legacy_wrapper.legacy_kernel" alias="theodo_evolution_legacy_wrapper.legacy_kernel.symfony14" />
+
+        <service id="theodo_evolution_legacy_wrapper.autoload.codeigniter_class_loader" class="%theodo_evolution_legacy_wrapper.autoload.codeigniter_class_loader.class%" public="false" />
     </services>
 </container>

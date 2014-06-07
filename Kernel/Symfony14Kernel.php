@@ -14,47 +14,12 @@ use Theodo\Evolution\Bundle\LegacyWrapperBundle\Autoload\LegacyClassLoaderInterf
  * 
  * @author Benjamin Grandfond <benjaming@theodo.fr>
  */
-class Symfony14Kernel implements LegacyKernelInterface
+class Symfony14Kernel extends LegacyKernel
 {
-    /**
-     * @var string
-     */
-    private $rootDir;
-
-    /**
-     * @var boolean
-     */
-    private $isBooted;
-
     /**
      * @var \sfApplicationConfiguration
      */
     private $configuration;
-
-    /**
-     * @var LegacyClassLoadrInterface
-     */
-    private $classLoader;
-
-    /**
-     * @var array
-     */
-    private $options = array();
-
-    /**
-     * @param $rootDir
-     * @param LegacyClassLoaderInterface $classLoader
-     */
-    public function __construct($rootDir, LegacyClassLoaderInterface $classLoader)
-    {
-        $this->rootDir  = $rootDir;
-        $this->vendorPath  = $this->rootDir.'/lib/vendor';
-        $this->isBooted    = false;
-
-        $classLoader->setKernel($this);
-        $this->classLoader = $classLoader;
-
-    }
 
     /**
      * {@inheritdoc}
@@ -67,6 +32,10 @@ class Symfony14Kernel implements LegacyKernelInterface
 
         if ($this->isBooted()) {
             return;
+        }
+
+        if (empty($this->classLoader)) {
+            throw new \RuntimeException('You must provide a class loader to the Symfony 1.4 kernel.');
         }
 
         if (!$this->classLoader->isAutoloaded()) {
@@ -136,6 +105,15 @@ class Symfony14Kernel implements LegacyKernelInterface
     public function setRootDir($rootDir)
     {
         $this->rootDir = $rootDir;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setClassLoader(LegacyClassLoaderInterface $classLoader)
+    {
+        $classLoader->setKernel($this);
+        $this->classLoader = $classLoader;
     }
 
     /**

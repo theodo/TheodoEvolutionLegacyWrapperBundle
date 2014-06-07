@@ -1,3 +1,17 @@
+How it works
+============
+
+The aim of the bundle is to allow a legacy project to handle HTTP requests instead of Symfony 2,
+in a simple way:
+* let Symfony try to find a controller that matches the request
+* if it can't, it let the legacy project try to return a response
+* otherwise return a 404 response
+
+To do so, the LegacyWrapperBundle provides a ```RouterLister``` which will delegates the request
+handling to the ```RouterListener``` of Symfony 2 and if a ```HttpNotFoundException``` is thrown
+it will call the legacy kernel, which is an implementation of the ``HttpKernelInterface`` of the
+legacy project.
+
 Installation
 ============
 
@@ -22,30 +36,7 @@ And run Composer:
 Configuration
 =============
 
-* Extend the EvolutionKernel:
-
-::
-
-    use Theodo\Evolution\Bundle\LegacyWrapperBundle\HttpKernel\EvolutionKernel;
-
-    class AppKernel extends EvolutionKernel
-    {
-        // ...
-    }
-
-* Inject the ``$loader`` to the kernel in the front controllers and the console script:
-
-::
-
-    // ...
-    $loader = require_once __DIR__.'/../app/bootstrap.php.cache';
-
-    // ...
-
-    $kernel = new AppKernel('dev', true);
-    $kernel->setLoader($loader);
-
-* Add the bundles in your app/AppKernel.php:
+Add the bundles in your app/AppKernel.php:
 
 ::
 
@@ -57,46 +48,22 @@ Configuration
         );
     }
 
-* Configure the bundle in your app/config/config.yml:
+Configure the bundle in your app/config/config.yml:
 
-::
+* `Symfony >=1.4 configuration`_
+* `Code Igniter ~2.1 configuration`_
+* `Custom kernel configuration`_
 
-    theodo_evolution_legacy_wrapper:
-        legacy_path:     %kernel.root_dir%/../legacy
-        kernel_id:       theodo_evolution_legacy_wrapper.legacy_kernel.symfony14
-        class_loader_id: your_bundle.autoload.legacy_class_loader
-        assets:
-            web:
-                base: web
-                directories:
-                    - css
-                    - js
-                    - images
+.. _Symfony >=1.4 configuration: symfony14.rst
+.. _Code Igniter ~2.1 configuration: codeigniter.rst
+.. _Custom kernel configuration: customkernel.rst
 
-What these options are?
+Autoloading
+===========
 
- * ``legacy_path``: this tells the legacy kernel where your legacy project lives
- * ``kernel_id``: you can specify which legacy kernel you want to use. Using an id allows
-                  you to use your own kernel or use those provided by the bundle (see
-                  `implemented kernels`_
- * ``class_loader_id``: specify the service that will handle the autoloading of your legacy project.
-                        The bundle does not provide (yet) any autoloader, you have to `create your own`_.
- * ``assets``: configure the assets of the legacy app to install in the web directory with the legacy assets
-               install command: ``php app/console legacy:assets:install --symlink``
+To make the legacy application handle the request or to use the legacy code from Symfony 2
+(in a controller for example) you must autoload it.
 
-.. _implemented kernels: ../../Kernel
-.. _create your own: autoloading.rst
+See the `autoloading`_ guide.
 
-How it works
-============
-
-The aim of the bundle is to allow a legacy project to handle HTTP requests instead of Symfony 2,
-in a simple way:
- * let Symfony try to find a controller that match the request
- * if it can't let the legacy project try to do so
- * if it can't either, return a 404 response
-
-To do so, the LegacyWrapperBundle provides a ```RouterLister``` which will delegates the request
-handling to the ```RouterListener``` of Symfony 2 and if a ```HttpNotFoundException``` is thrown
-it will call the legacy kernel, which is an implementation of the ``HttpKernelInterface`` of the
-legacy project.
+.. _autoloading: autoloading.rst
