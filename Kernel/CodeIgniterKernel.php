@@ -23,6 +23,11 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
          */
         public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = true)
         {
+            $session = $request->getSession();
+            if ($session->isStarted()) {
+                $session->save();
+            }
+
             $response = new Response();
 
             global $CFG, $RTR, $BM, $EXT, $CI, $URI, $OUT;
@@ -146,6 +151,9 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
 
             // Restore the Symfony2 error handler
             restore_error_handler();
+
+            // Restart the Symfony 2 session
+            $session->migrate();
 
             if (404 !== $response->getStatusCode()) {
                 $response->setContent($OUT->get_output());
