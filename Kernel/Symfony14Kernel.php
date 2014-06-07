@@ -68,8 +68,8 @@ class Symfony14Kernel extends LegacyKernel
             $session->save();
         }
 
-        $context = \sfContext::createInstance($this->configuration);// be careful this will start the session of symfony 1
         ob_start();
+        $context = \sfContext::createInstance($this->configuration);// be careful this will start the session of symfony 1
         $context->dispatch();
         $context->shutdown();
         ob_end_clean();
