@@ -14,8 +14,12 @@ class CodeIgniterKernelTest extends ProphecyTestCase
 {
     public function testShouldBootAndHandleRequest()
     {
+        if (version_compare(PHP_VERSION, '5.6', '>=')) {
+            $this->markTestSkipped('CodeIgniter v2.1 is not compatible with PHP >= 5.6');
+        }
+
         $session = new Session(new MockArraySessionStorage());
-        $request = Request::create('/');
+        $request = Request::create('/welcome/');
         $request->setSession($session);
 
         $requestStack = $this->prophesize('Symfony\Component\HttpFoundation\RequestStack');
