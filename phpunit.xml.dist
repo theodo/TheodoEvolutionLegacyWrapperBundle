@@ -4,7 +4,7 @@
 <phpunit
     backupGlobals               = "false"
     backupStaticAttributes      = "false"
-    colors                      = "false"
+    colors                      = "true"
     convertErrorsToExceptions   = "true"
     convertNoticesToExceptions  = "true"
     convertWarningsToExceptions = "true"
@@ -18,6 +18,10 @@
             <directory>./Tests</directory>
         </testsuite>
     </testsuites>
+
+    <php>
+        <env name="THEODO_EVOLUTION_FAKE_PROJECTS" value="./vendor/theodo-evolution/fake-projects" />
+    </php>
 
     <filter>
         <whitelist>

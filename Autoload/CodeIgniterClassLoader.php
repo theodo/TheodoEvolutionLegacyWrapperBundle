@@ -121,6 +121,8 @@ class CodeIgniterClassLoader implements LegacyClassLoaderInterface
         $LANG = load_class('Lang', 'core');
         $GLOBALS['LANG'] = $LANG;
         $this->kernel->getContainer()->set('LANG', $LANG);
+
+        $this->isAutoloaded = true;
     }
 
     /**

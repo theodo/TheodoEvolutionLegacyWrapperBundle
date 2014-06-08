@@ -1,9 +1,12 @@
 <?php
 
-namespace Kernel;
+namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Tests\Kernel;
 
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTestCase;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel\Symfony14Kernel;
 
 /**
@@ -13,7 +16,7 @@ use Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel\Symfony14Kernel;
  */
 class Symfony14KernelTest extends ProphecyTestCase
 {
-    public function testShouldBoot()
+    public function testShouldBootAndHandleRequest()
     {
         $classLoader = $this->prophesize('Theodo\Evolution\Bundle\LegacyWrapperBundle\Autoload\LegacyClassLoaderInterface');
         $container   = $this->prophesize('Symfony\Component\DependencyInjection\ContainerInterface');
@@ -23,16 +26,26 @@ class Symfony14KernelTest extends ProphecyTestCase
         $classLoader->autoload()->shouldBeCalled();
 
         $kernel = new Symfony14Kernel();
-        $kernel->setRootDir(__DIR__.'/fixtures/symfony14');
+        $kernel->setRootDir($_ENV['THEODO_EVOLUTION_FAKE_PROJECTS'].'/symfony14');
         $kernel->setClassLoader($classLoader->reveal());
         $kernel->setOptions(array(
             'application' => 'frontend',
-            'environment' => 'dev',
+            'environment' => 'prod',
             'debug' => true
         ));
-        $kernel->boot($container->reveal());
 
+        $session = new Session(new MockArraySessionStorage());
+
+        $request = Request::create('/');
+        $request->setSession($session);
+
+        $kernel->boot($container->reveal());
         $this->assertTrue($kernel->isBooted());
+
+        $response = $kernel->handle($request, 1, true);
+
+        $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $response);
+        $this->assertEquals(200, $response->getStatusCode());
     }
 }
  

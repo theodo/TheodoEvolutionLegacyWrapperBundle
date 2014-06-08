@@ -24,8 +24,15 @@
     "require-dev": {
         "phpunit/phpunit": "~4.1",
         "phpspec/prophecy": "~1.1",
-        "phpspec/prophecy-phpunit": "~1.0"
+        "phpspec/prophecy-phpunit": "~1.0",
+        "theodo-evolution/fake-projects": "dev-master"
     },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/theodo/theodo-evolution-fake-projects"
+        }
+    ],
     "extra": {
         "branch-alias": {
             "dev-master": "1.0.x-dev"
