@@ -14,9 +14,6 @@ Theodo Evolution's LegacyWrapperBundle
 --------------------------------------
 
 This bundle allows you to call the legacy framework from Symfony2.
-
-This bundle has a dependency with [TheodoEvolutionLegacyWrapperBundle](https://github.com/theodo/TheodoEvolutionLegacyWrapperBundle), which provides the legacy kernel to the Symfony2 app.
-
 Tested and works for legacy app made with:
 
 * [symfony 1.4](https://github.com/symfony/symfony1)
