@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Finder\Finder;
 use Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel\LegacyKernelInterface;
 
 /**
@@ -78,7 +79,15 @@ TEXT
     {
         $filesystem = $this->getContainer()->get('filesystem');
 
-        $groupDir = $kernel->getRootDir().'/'.$group['base'];
+        if (false === strpos($kernel->getRootDir(), $group['base'])) {
+            $groupDir = $kernel->getRootDir().'/'.$group['base'];
+        } else {
+            $groupDir = $group['base'];
+        }
+
+        if (!is_dir($groupDir)) {
+            throw new \InvalidArgumentException('The base directory does not exists.');
+        }
 
         foreach ($group['directories'] as $directory) {
             if (is_dir($originDir = $groupDir.'/'.$directory)) {
@@ -90,7 +99,7 @@ TEXT
 
                 if ($input->getOption('symlink')) {
                     if ($input->getOption('relative')) {
-                        $relativeOriginDir = $filesystem->makePathRelative($originDir, realpath($bundlesDir));
+                        $relativeOriginDir = $filesystem->makePathRelative($originDir, realpath($target));
                     } else {
                         $relativeOriginDir = $originDir;
                     }
