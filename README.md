@@ -21,6 +21,7 @@ Tested and works for legacy app made with:
 
 * [symfony 1.4](https://github.com/symfony/symfony1)
 * [symfony 1.5](https://github.com/lexpress/symfony1)
+* [CodeIgniter >=2.1.2](https://github.com/EllisLab/CodeIgniter/tree/2.1-stable)
 
 Prerequisites
 -------------
