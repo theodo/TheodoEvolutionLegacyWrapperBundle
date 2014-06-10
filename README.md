@@ -1,6 +1,9 @@
 Theodo Evolution LegacyWrapperBundle
 ====================================
 
+[![Build Status](https://travis-ci.org/theodo/TheodoEvolutionLegacyWrapperBundle.svg?branch=master)](https://travis-ci.org/theodo/TheodoEvolutionLegacyWrapperBundle) [![Latest Stable Version](https://poser.pugx.org/theodo-evolution/legacy-wrapper-bundle/version.svg)](https://packagist.org/packages/theodo-evolution/legacy-wrapper-bundle) [![Latest Unstable Version](https://poser.pugx.org/theodo-evolution/legacy-wrapper-bundle/v/unstable.svg)](//packagist.org/packages/theodo-evolution/legacy-wrapper-bundle) [![Total Downloads](https://poser.pugx.org/theodo-evolution/legacy-wrapper-bundle/downloads.svg)](https://packagist.org/packages/theodo-evolution/legacy-wrapper-bundle)
+
+
 What is Theodo Evolution?
 -------------------------
 
