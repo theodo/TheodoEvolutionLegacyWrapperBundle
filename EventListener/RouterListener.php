@@ -55,10 +55,6 @@ class RouterListener implements EventSubscriberInterface
      */
     public function onKernelRequest(GetResponseEvent $event)
     {
-        if (HttpKernel::MASTER_REQUEST != $event->getRequestType()) {
-            return;
-        }
-
         try {
             $this->routerListener->onKernelRequest($event);
         } catch (NotFoundHttpException $e) {
