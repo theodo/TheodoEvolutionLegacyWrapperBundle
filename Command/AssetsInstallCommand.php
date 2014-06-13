@@ -79,7 +79,7 @@ TEXT
     {
         $filesystem = $this->getContainer()->get('filesystem');
 
-        if (false === strpos($kernel->getRootDir(), $group['base'])) {
+        if (false === strpos($group['base'], $kernel->getRootDir())) {
             $groupDir = $kernel->getRootDir().'/'.$group['base'];
         } else {
             $groupDir = $group['base'];
