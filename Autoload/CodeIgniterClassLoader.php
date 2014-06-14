@@ -122,6 +122,9 @@ class CodeIgniterClassLoader implements LegacyClassLoaderInterface
         $GLOBALS['LANG'] = $LANG;
         $this->kernel->getContainer()->set('LANG', $LANG);
 
+        // Load the app controller and local controller
+        require_once BASEPATH . 'core/Controller.php';
+
         $this->isAutoloaded = true;
     }
 
