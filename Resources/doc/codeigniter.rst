@@ -1,4 +1,4 @@
-Wrapp CodeIgniter
+Wrap CodeIgniter
 =================
 
 Here is the basic configuration for a CodeIgniter application:
