@@ -1,4 +1,4 @@
-Wrapp symfony >=1.4
+Wrap symfony >=1.4
 ===================
 
 Here is the basic configuration for a symfony >=1.4 application:
