@@ -3,6 +3,7 @@ How it works
 
 The aim of the bundle is to allow a legacy project to handle HTTP requests instead of Symfony 2,
 in a simple way:
+
 * let Symfony try to find a controller that matches the request
 * if it can't, it let the legacy project try to return a response
 * otherwise return a 404 response
