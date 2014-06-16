@@ -54,6 +54,7 @@ class Symfony14Kernel extends LegacyKernel
             $debug,
             $this->getRootDir()
         );
+        $this->configuration->loadHelpers(array('Url'));
 
         $this->isBooted = true;
     }
@@ -69,7 +70,7 @@ class Symfony14Kernel extends LegacyKernel
         }
 
         ob_start();
-        $context = \sfContext::createInstance($this->configuration);// be careful this will start the session of symfony 1
+        $context = $this->getSfContext();
         $context->dispatch();
         $context->shutdown();
         ob_end_clean();
@@ -109,5 +110,19 @@ class Symfony14Kernel extends LegacyKernel
         $response->headers->set('Content-Type', $legacyResponse->getContentType());
 
         return $response;
+    }
+
+    /**
+     * @return \sfContext
+     */
+    public function getSfContext()
+    {
+        if (\sfContext::hasInstance()) {
+            return \sfContext::getInstance();
+        }
+
+        $context = \sfContext::createInstance($this->configuration);
+
+        return $context; // be careful this will start the session of symfony 1
     }
 }
