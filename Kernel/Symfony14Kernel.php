@@ -56,6 +56,20 @@ class Symfony14Kernel extends LegacyKernel
         );
         $this->configuration->loadHelpers(array('Url'));
 
+        // Create a context to use with some helpers like Url.
+        if (!\sfContext::hasInstance()) {
+            $session = $container->get('session');
+            if ($session->isStarted()) {
+                $session->save();
+            }
+
+            ob_start();
+            \sfContext::createInstance($this->configuration);
+            ob_end_flush();
+
+            $session->migrate();
+        }
+
         $this->isBooted = true;
     }
 
@@ -70,7 +84,7 @@ class Symfony14Kernel extends LegacyKernel
         }
 
         ob_start();
-        $context = $this->getSfContext();
+        $context = \sfContext::getInstance();
         $context->dispatch();
         $context->shutdown();
         ob_end_clean();
@@ -110,19 +124,5 @@ class Symfony14Kernel extends LegacyKernel
         $response->headers->set('Content-Type', $legacyResponse->getContentType());
 
         return $response;
-    }
-
-    /**
-     * @return \sfContext
-     */
-    public function getSfContext()
-    {
-        if (\sfContext::hasInstance()) {
-            return \sfContext::getInstance();
-        }
-
-        $context = \sfContext::createInstance($this->configuration);
-
-        return $context; // be careful this will start the session of symfony 1
     }
 }
