@@ -19,7 +19,13 @@ class Symfony14KernelTest extends ProphecyTestCase
     public function testShouldBootAndHandleRequest()
     {
         $classLoader = $this->prophesize('Theodo\Evolution\Bundle\LegacyWrapperBundle\Autoload\LegacyClassLoaderInterface');
+
+        $session = new Session(new MockArraySessionStorage());
+        $request = Request::create('/');
+        $request->setSession($session);
+
         $container   = $this->prophesize('Symfony\Component\DependencyInjection\ContainerInterface');
+        $container->get('session')->willReturn($session);
 
         $classLoader->setKernel(Argument::type('Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel\Symfony14Kernel'))->shouldBeCalled();
         $classLoader->isAutoloaded()->willReturn(false);
@@ -33,11 +39,6 @@ class Symfony14KernelTest extends ProphecyTestCase
             'environment' => 'prod',
             'debug' => true
         ));
-
-        $session = new Session(new MockArraySessionStorage());
-
-        $request = Request::create('/');
-        $request->setSession($session);
 
         $kernel->boot($container->reveal());
         $this->assertTrue($kernel->isBooted());
