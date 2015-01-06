@@ -4,7 +4,6 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
@@ -26,7 +25,7 @@ class TheodoEvolutionLegacyWrapperExtension extends Extension
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
-        $container->setDefinition('composer.loader', new Definition())->setSynthetic(true);
+        $container->register('composer.loader', 'Composer\Autoload\ClassLoader')->setSynthetic(true);
 
         $container->setParameter('theodo_evolution_legacy_wrapper.root_dir', $config['root_dir']);
         $container->setParameter('theodo_evolution_legacy_wrapper.assets', $config['assets']);
