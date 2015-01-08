@@ -88,7 +88,7 @@ class RouterListener implements EventSubscriberInterface
             KernelEvents::REQUEST => array(array('onKernelRequest', 31)),
         );
 
-        if (defined('KernelEvents::FINISH_REQUEST')) {
+        if (defined('\Symfony\Component\HttpKernel\KernelEvents::FINISH_REQUEST')) {
             $listeners[KernelEvents::FINISH_REQUEST] = array(array('onKernelFinishRequest', 0));
         }
 
