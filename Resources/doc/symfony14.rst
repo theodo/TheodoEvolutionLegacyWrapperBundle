@@ -11,4 +11,4 @@ Here is the basic configuration for a symfony >=1.4 application:
             options:
                 application: frontend
                 environment: '%kernel.environment%'
-                debug:       '%kernel.debug%
+                debug:       '%kernel.debug%'
