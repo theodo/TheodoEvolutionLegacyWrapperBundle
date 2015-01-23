@@ -58,6 +58,7 @@ To do so you will have to create a ``class loader`` which must implement the
 Declare this class as a service:
 
 ::
+
     <parameters>
         <parameter key="my_legacy.autoload.my_legacy_class_loader.class">Acme\MyLegacyBundle\Autoload\MyLegacyClassLoader</parameter>
     </parameters>
@@ -134,6 +135,7 @@ to inject the autoloader provided by Composer in it.
 Don't forget to change the service definition and add the ``loader_aware`` tag:
 
 ::
+
     <parameters>
         <parameter key="my_legacy.autoload.my_legacy_class_loader.class">Acme\MyLegacyBundle\Autoload\MyLegacyClassLoader</parameter>
     </parameters>
