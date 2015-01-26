@@ -5,9 +5,7 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
-use Theodo\Evolution\Bundle\LegacyWrapperBundle\Autoload\LegacyClassLoaderInterface;
+use Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel\Event\LegacyKernelBootEvent;
 
 /**
  * Symfony14Kernel kernel handles.
@@ -41,6 +39,11 @@ class Symfony14Kernel extends LegacyKernel
         if (!$this->classLoader->isAutoloaded()) {
             $this->classLoader->autoload();
         }
+
+        $dispatcher = $container->get('event_dispatcher');
+        $event = new LegacyKernelBootEvent($container->get('request'), $this->options);
+        $dispatcher->dispatch(LegacyKernelEvents::BOOT, $event);
+        $this->options = $event->getOptions();
 
         require_once $this->rootDir.'/config/ProjectConfiguration.class.php';
 
