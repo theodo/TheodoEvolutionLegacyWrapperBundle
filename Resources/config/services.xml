@@ -6,6 +6,7 @@
 
     <parameters>
         <parameter key="theodo_evolution_legacy_wrapper.legacy_kernel.symfony14.class">Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel\Symfony14Kernel</parameter>
+        <parameter key="theodo_evolution_legacy_wrapper.autoload.symfony14_class_loader.class">Theodo\Evolution\Bundle\LegacyWrapperBundle\Autoload\Symfony14ClassLoader</parameter>
         <parameter key="theodo_evolution_legacy_wrapper.legacy_kernel.codeigniter.class">Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel\CodeIgniterKernel</parameter>
         <parameter key="theodo_evolution_legacy_wrapper.autoload.codeigniter_class_loader.class">Theodo\Evolution\Bundle\LegacyWrapperBundle\Autoload\CodeIgniterClassLoader</parameter>
         <parameter key="theodo_evolution_legacy_wrapper.router_listener.class">Theodo\Evolution\Bundle\LegacyWrapperBundle\EventListener\RouterListener</parameter>
@@ -51,7 +52,9 @@
         />
 
         <service id="theodo_evolution_legacy_wrapper.legacy_kernel" alias="theodo_evolution_legacy_wrapper.legacy_kernel.symfony14" />
+        <service id="theodo_evolution_legacy_wrapper.autoload.class_loader" alias="theodo_evolution_legacy_wrapper.autoload.symfony14_class_loader" />
 
         <service id="theodo_evolution_legacy_wrapper.autoload.codeigniter_class_loader" class="%theodo_evolution_legacy_wrapper.autoload.codeigniter_class_loader.class%" public="false" />
+        <service id="theodo_evolution_legacy_wrapper.autoload.symfony14_class_loader" class="%theodo_evolution_legacy_wrapper.autoload.symfony14_class_loader.class%" public="false" />
     </services>
 </container>
