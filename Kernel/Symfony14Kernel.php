@@ -32,11 +32,7 @@ class Symfony14Kernel extends LegacyKernel
             return;
         }
 
-        if (empty($this->classLoader)) {
-            throw new \RuntimeException('You must provide a class loader to the Symfony 1.4 kernel.');
-        }
-
-        if (!$this->classLoader->isAutoloaded()) {
+        if ($this->classLoader && !$this->classLoader->isAutoloaded()) {
             $this->classLoader->autoload();
         }
 

@@ -31,9 +31,6 @@
             <call method="setRootDir">
                 <argument type="string">%theodo_evolution_legacy_wrapper.root_dir%</argument>
             </call>
-            <call method="setClassLoader">
-                <argument type="service" id="theodo_evolution_legacy_wrapper.autoload.class_loader" />
-            </call>
         </service>
 
         <service

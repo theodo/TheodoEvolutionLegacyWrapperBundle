@@ -58,5 +58,38 @@ class Symfony14KernelTest extends ProphecyTestCase
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $response);
         $this->assertEquals(200, $response->getStatusCode());
     }
+
+    public function testShouldBootAndHandleRequestIfClassLoaderIsNotProvided()
+    {
+        $kernelOptions = array(
+            'application' => 'frontend',
+            'environment' => 'prod',
+            'debug' => true
+        );
+
+        $session = new Session(new MockArraySessionStorage());
+        $request = Request::create('/');
+        $request->setSession($session);
+
+        $eventDispatcher = $this->prophesize('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $eventDispatcher->dispatch('legacy_kernel.boot', new LegacyKernelBootEvent($request, $kernelOptions))->shouldBeCalled();
+
+        $container   = $this->prophesize('Symfony\Component\DependencyInjection\ContainerInterface');
+        $container->get('event_dispatcher')->willReturn($eventDispatcher);
+        $container->get('request')->willReturn($request);
+
+        $kernel = new Symfony14Kernel();
+        $kernel->setRootDir($_ENV['THEODO_EVOLUTION_FAKE_PROJECTS'].'/symfony14');
+        $kernel->setOptions($kernelOptions);
+
+        $kernel->boot($container->reveal());
+        $this->assertTrue($kernel->isBooted());
+        $this->assertAttributeEmpty('classLoader', $kernel);
+
+        $response = $kernel->handle($request, 1, true);
+
+        $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $response);
+        $this->assertEquals(200, $response->getStatusCode());
+    }
 }
 
