@@ -120,7 +120,10 @@ class Symfony14Kernel extends LegacyKernel
         $response = new Response($legacyResponse->getContent(), $legacyResponse->getStatusCode());
         $response->setCharset($legacyResponse->getCharset());
         $response->setStatusCode($legacyResponse->getStatusCode());
-        $response->headers->set('Content-Type', $legacyResponse->getContentType());
+
+        foreach($legacyResponse->getHttpHeaders() as $headerName => $headerValue) {
+            $response->headers->set($headerName, $headerValue);
+        }
 
         return $response;
     }
