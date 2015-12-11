@@ -30,5 +30,5 @@ appropriate folders
                 environment: %kernel.environment%
                 version: '2.1.2'
                 core: false
-                system: %kernel.root_dir%/../library/CI_2_2_0/system
-                application: %kernel.root_dir%/../library/CI_2_2_0/application
+                system: %kernel.root_dir%/../library/CodeIgniter_2.1.4/system
+                application: %kernel.root_dir%/../application
