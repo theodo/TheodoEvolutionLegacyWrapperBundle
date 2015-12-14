@@ -187,8 +187,7 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
 
             // Path to the system folder
             $systemFolderPath = $this->getRootDir() . '/system/';
-            if (array_key_exists('system', $this->options))
-            {
+            if (array_key_exists('system', $this->options)) {
                 $systemFolderPath = $this->options['system'];
             }
 
@@ -202,8 +201,7 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
 
             // The path to the "application" folder
             $applicationPath = $this->getRootDir() . '/application/';
-            if (array_key_exists('application', $this->options))
-            {
+            if (array_key_exists('application', $this->options)) {
                 $applicationPath = $this->options['application'];
             }
 
