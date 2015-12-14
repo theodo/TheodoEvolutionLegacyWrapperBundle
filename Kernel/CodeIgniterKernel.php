@@ -10,6 +10,7 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
     use Symfony\Component\HttpFoundation\Request;
     use Symfony\Component\HttpFoundation\Response;
     use Theodo\Evolution\Bundle\LegacyWrapperBundle\Autoload\LegacyClassLoaderInterface;
+    use Theodo\Evolution\Bundle\LegacyWrapperBundle\Exception\CodeIgniterException;
 
     class CodeIgniterKernel extends LegacyKernel
     {
