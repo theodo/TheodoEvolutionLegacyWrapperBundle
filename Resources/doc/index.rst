@@ -24,6 +24,7 @@ Add the following lines to your composer.json:
 
     "require": {
         ...
+        "composer/composer": "~1.0@dev",
         "theodo-evolution/legacy-wrapper-bundle": "~1.0"
         ...
     },
