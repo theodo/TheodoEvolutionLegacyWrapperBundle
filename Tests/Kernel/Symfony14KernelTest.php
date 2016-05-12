@@ -7,9 +7,11 @@ use Prophecy\PhpUnit\ProphecyTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
+use Symfony\Component\HttpKernel\Kernel;
 use Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel\Event\LegacyKernelBootEvent;
 use Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel\Symfony14Kernel;
 
@@ -40,7 +42,13 @@ class Symfony14KernelTest extends ProphecyTestCase
         $container   = $this->prophesize('Symfony\Component\DependencyInjection\ContainerInterface');
         $container->get('session')->willReturn($session);
         $container->get('event_dispatcher')->willReturn($eventDispatcher);
-        $container->get('request')->willReturn($request);
+        if (Kernel::MAJOR_VERSION == 2) {
+            $container->get('request')->willReturn($request);
+        } else {
+            $request_stack = new RequestStack();
+            $request_stack->push($request);
+            $container->get('request_stack')->willReturn($request_stack);
+        }
 
         $classLoader->setKernel(Argument::type('Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel\Symfony14Kernel'))->shouldBeCalled();
         $classLoader->isAutoloaded()->willReturn(false);
@@ -77,7 +85,14 @@ class Symfony14KernelTest extends ProphecyTestCase
 
         $container   = $this->prophesize('Symfony\Component\DependencyInjection\ContainerInterface');
         $container->get('event_dispatcher')->willReturn($eventDispatcher);
-        $container->get('request')->willReturn($request);
+
+        if (Kernel::MAJOR_VERSION == 2) {
+            $container->get('request')->willReturn($request);
+        } else {
+            $request_stack = new RequestStack();
+            $request_stack->push($request);
+            $container->get('request_stack')->willReturn($request_stack);
+        }
 
         $kernel = new Symfony14Kernel();
         $kernel->setRootDir($_ENV['THEODO_EVOLUTION_FAKE_PROJECTS'].'/symfony14');

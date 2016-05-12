@@ -36,8 +36,14 @@ class Symfony14Kernel extends LegacyKernel
             $this->classLoader->autoload();
         }
 
+        if ($container->has('request_stack')) {
+            $request = $container->get('request_stack')->getCurrentRequest();
+        } else {
+            $request = $container->get('request');
+        }
+
         $dispatcher = $container->get('event_dispatcher');
-        $event = new LegacyKernelBootEvent($container->get('request'), $this->options);
+        $event = new LegacyKernelBootEvent($request, $this->options);
         $dispatcher->dispatch(LegacyKernelEvents::BOOT, $event);
         $this->options = $event->getOptions();
 
