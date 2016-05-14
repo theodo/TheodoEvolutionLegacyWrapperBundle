@@ -4,8 +4,6 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Tests\Kernel;
 
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTestCase;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +14,7 @@ use Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel\Event\LegacyKernelBootEve
 use Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel\Symfony14Kernel;
 
 /**
- * Symfony14KernelTest
+ * Symfony14KernelTest.
  * 
  * @author Benjamin Grandfond <benjaming@theodo.fr>
  */
@@ -27,7 +25,7 @@ class Symfony14KernelTest extends ProphecyTestCase
         $kernelOptions = array(
             'application' => 'frontend',
             'environment' => 'prod',
-            'debug' => true
+            'debug' => true,
         );
 
         $classLoader = $this->prophesize('Theodo\Evolution\Bundle\LegacyWrapperBundle\Autoload\LegacyClassLoaderInterface');
@@ -39,16 +37,9 @@ class Symfony14KernelTest extends ProphecyTestCase
         $eventDispatcher = $this->prophesize('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         $eventDispatcher->dispatch('legacy_kernel.boot', new LegacyKernelBootEvent($request, $kernelOptions))->shouldBeCalled();
 
-        $container   = $this->prophesize('Symfony\Component\DependencyInjection\ContainerInterface');
+        $container = $this->createProphesizedContainer($request);
         $container->get('session')->willReturn($session);
         $container->get('event_dispatcher')->willReturn($eventDispatcher);
-        if (Kernel::MAJOR_VERSION == 2) {
-            $container->get('request')->willReturn($request);
-        } else {
-            $request_stack = new RequestStack();
-            $request_stack->push($request);
-            $container->get('request_stack')->willReturn($request_stack);
-        }
 
         $classLoader->setKernel(Argument::type('Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel\Symfony14Kernel'))->shouldBeCalled();
         $classLoader->isAutoloaded()->willReturn(false);
@@ -73,7 +64,7 @@ class Symfony14KernelTest extends ProphecyTestCase
         $kernelOptions = array(
             'application' => 'frontend',
             'environment' => 'prod',
-            'debug' => true
+            'debug' => true,
         );
 
         $session = new Session(new MockArraySessionStorage());
@@ -83,16 +74,8 @@ class Symfony14KernelTest extends ProphecyTestCase
         $eventDispatcher = $this->prophesize('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         $eventDispatcher->dispatch('legacy_kernel.boot', new LegacyKernelBootEvent($request, $kernelOptions))->shouldBeCalled();
 
-        $container   = $this->prophesize('Symfony\Component\DependencyInjection\ContainerInterface');
+        $container = $this->createProphesizedContainer($request);
         $container->get('event_dispatcher')->willReturn($eventDispatcher);
-
-        if (Kernel::MAJOR_VERSION == 2) {
-            $container->get('request')->willReturn($request);
-        } else {
-            $request_stack = new RequestStack();
-            $request_stack->push($request);
-            $container->get('request_stack')->willReturn($request_stack);
-        }
 
         $kernel = new Symfony14Kernel();
         $kernel->setRootDir($_ENV['THEODO_EVOLUTION_FAKE_PROJECTS'].'/symfony14');
@@ -118,7 +101,7 @@ class Symfony14KernelTest extends ProphecyTestCase
         $legacyResponse->getHttpHeaders()->willReturn($headers = array(
             'Content-Type' => 'text/html',
             'Location' => 'http://localhost',
-            'X-Custom-Header' => 'value'
+            'X-Custom-Header' => 'value',
         ));
         $legacyResponse->getContent()->willReturn($content = 'content');
         $legacyResponse->getCharset()->willReturn($charset = 'charset');
@@ -134,5 +117,24 @@ class Symfony14KernelTest extends ProphecyTestCase
         $this->assertEquals($headers['Location'], $response->headers->get('Location'));
         $this->assertEquals($headers['X-Custom-Header'], $response->headers->get('X-Custom-Header'));
     }
-}
+    
+    protected function createProphesizedContainer($request)
+    {
+        $container = $this->prophesize('Symfony\Component\DependencyInjection\ContainerInterface');
 
+        if (Kernel::MAJOR_VERSION === 2) {
+            $container->has('request_stack')->willReturn(false);
+            $container->get('request')->willReturn($request);
+        } elseif (Kernel::MAJOR_VERSION === 3) {
+            $request_stack = new RequestStack();
+            $request_stack->push($request);
+            $container->has('request_stack')->willReturn(true);
+            $container->get('request_stack')->willReturn($request_stack);
+        } else {
+            $container->has('request_stack')->willReturn(false);
+            $container->get('request')->willReturn($request);
+        }
+        
+        return $container;
+    }
+}
