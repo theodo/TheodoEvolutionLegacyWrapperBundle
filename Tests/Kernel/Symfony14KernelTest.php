@@ -117,15 +117,12 @@ class Symfony14KernelTest extends ProphecyTestCase
         $this->assertEquals($headers['Location'], $response->headers->get('Location'));
         $this->assertEquals($headers['X-Custom-Header'], $response->headers->get('X-Custom-Header'));
     }
-    
+
     protected function createProphesizedContainer($request)
     {
         $container = $this->prophesize('Symfony\Component\DependencyInjection\ContainerInterface');
 
-        if (Kernel::MAJOR_VERSION === 2) {
-            $container->has('request_stack')->willReturn(false);
-            $container->get('request')->willReturn($request);
-        } elseif (Kernel::MAJOR_VERSION === 3) {
+        if (Kernel::MAJOR_VERSION === 3) {
             $request_stack = new RequestStack();
             $request_stack->push($request);
             $container->has('request_stack')->willReturn(true);
