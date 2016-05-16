@@ -10,6 +10,7 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
     use Symfony\Component\HttpFoundation\Request;
     use Symfony\Component\HttpFoundation\Response;
     use Theodo\Evolution\Bundle\LegacyWrapperBundle\Autoload\LegacyClassLoaderInterface;
+    use Theodo\Evolution\Bundle\LegacyWrapperBundle\Exception\CodeIgniterException;
 
     class CodeIgniterKernel extends LegacyKernel
     {
@@ -186,7 +187,12 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
             define('EXT', '.php');
 
             // Path to the system folder
-            define('BASEPATH', str_replace("\\", "/", realpath($this->getRootDir() . '/system/') . '/'));
+            $systemFolderPath = $this->getRootDir() . '/system/';
+            if (array_key_exists('system', $this->options)) {
+                $systemFolderPath = $this->options['system'];
+            }
+
+            define('BASEPATH', str_replace("\\", "/", realpath($systemFolderPath) . '/'));
 
             // Path to the front controller (this file)
             define('FCPATH', $container->getParameter('kernel.root_dir') . '/../web');
@@ -195,7 +201,12 @@ namespace Theodo\Evolution\Bundle\LegacyWrapperBundle\Kernel {
             define('SYSDIR', trim(strrchr(trim(BASEPATH, '/'), '/'), '/'));
 
             // The path to the "application" folder
-            define('APPPATH', $this->getRootDir() . '/application/');
+            $applicationPath = $this->getRootDir() . '/application/';
+            if (array_key_exists('application', $this->options)) {
+                $applicationPath = $this->options['application'];
+            }
+
+            define('APPPATH', realpath($applicationPath) . '/');
 
             // The path to the "sparks" folder
             define('SPARKPATH', $this->getRootDir() . '/sparks/');
