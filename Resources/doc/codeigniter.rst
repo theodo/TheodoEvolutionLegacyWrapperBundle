@@ -1,5 +1,5 @@
 Wrap CodeIgniter
-=================
+================
 
 Here is the basic configuration for a CodeIgniter application:
 ::
@@ -32,3 +32,4 @@ appropriate folders
                 core: false
                 system: %kernel.root_dir%/../library/CodeIgniter_2.1.4/system
                 application: %kernel.root_dir%/../application
+
