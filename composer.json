@@ -1,5 +1,5 @@
 {
-    "name": "theodo-evolution/legacy-wrapper-bundle",
+    "name": "gwissem/legacy-wrapper-bundle",
     "type": "symfony-bundle",
     "keywords": ["legacy", "symfony1", "symfony2"],
     "homepage": "http://www.theodo.fr",
