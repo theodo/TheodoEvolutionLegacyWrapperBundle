@@ -19,7 +19,7 @@
     "require": {
         "php": ">=5.3.3",
         "composer/composer": "~1.0@dev",
-        "symfony/framework-bundle": "~2.1|~3.0"
+        "symfony/framework-bundle": "~2.1|~3.0|~4.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.1",
