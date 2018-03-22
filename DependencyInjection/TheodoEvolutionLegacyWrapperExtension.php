@@ -25,7 +25,7 @@ class TheodoEvolutionLegacyWrapperExtension extends Extension
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
-        $container->register('composer.loader', 'Composer\Autoload\ClassLoader')->setSynthetic(true);
+        $container->register('composer.loader', 'Composer\Autoload\ClassLoader');
 
         $container->setParameter('theodo_evolution_legacy_wrapper.root_dir', $config['root_dir']);
         $container->setParameter('theodo_evolution_legacy_wrapper.assets', $config['assets']);
