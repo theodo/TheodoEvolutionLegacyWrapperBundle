@@ -23,7 +23,7 @@ Tested and works for legacy app made with:
 Prerequisites
 -------------
 
-This version requires at least Symfony 2.4 (we haven't tested it with other versions of the Symfony 2 framework yet).
+This version requires at least Symfony 2.4. It has been tested with Symfony 3.4.
 
 Documentation
 -------------

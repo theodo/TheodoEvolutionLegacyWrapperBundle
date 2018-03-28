@@ -74,4 +74,3 @@ class RouterListenerTest extends ProphecyTestCase
         $this->assertNull($event->getResponse());
     }
 }
- 
