@@ -71,8 +71,6 @@ class Symfony14Kernel extends LegacyKernel
             ob_start();
             \sfContext::createInstance($this->configuration);
             ob_end_flush();
-
-            $session->migrate();
         }
 
         $this->isBooted = true;
